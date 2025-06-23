@@ -155,7 +155,13 @@ export function printArrayInitializer(
 ) {
   if (!path.node.namedChildren.length) {
     const danglingComments = printDanglingComments(path, { indent: true });
-    return danglingComments ? ["{", danglingComments, hardline, "}"] : "{}";
+    if (!danglingComments) {
+      return "{}";
+    }
+    const block = ["{", danglingComments, hardline, "}"];
+    return options.braceStyle === "next-line" && !isNestedArray(path)
+      ? [hardline, ...block]
+      : block;
   }
 
   const list = join([",", line], path.map(print, "namedChildren"));
@@ -164,10 +170,30 @@ export function printArrayInitializer(
     list.push(ifBreak(","));
   }
 
+  if (options.braceStyle === "next-line") {
+    const block = ["{", indent([line, ...list]), line, "}"];
+    return isNestedArray(path) ? block : [hardline, ...block];
+  }
+
   return group(["{", indent([line, ...list]), line, "}"]);
 }
 
-export function printBlock(path: NamedNodePath, contents: Doc[]) {
+function isNestedArray(path: NamedNodePath) {
+  return (
+    path.parent?.type === SyntaxType.ArrayInitializer ||
+    path.parent?.type === SyntaxType.ElementValueArrayInitializer
+  );
+}
+
+export function printBlock(
+  path: NamedNodePath,
+  contents: Doc[],
+  options?: JavaParserOptions
+) {
+  if (options?.braceStyle === "next-line") {
+    return printBlockNextLine(path, contents);
+  }
+
   if (contents.length) {
     return group([
       "{",
@@ -217,6 +243,34 @@ export function printBlock(path: NamedNodePath, contents: Doc[]) {
       ].includes(parent.type))
     ? "{}"
     : ["{", hardline, "}"];
+}
+
+function printBlockNextLine(path: NamedNodePath, contents: Doc[]) {
+  const parentType = path.parent?.type;
+  const isChildOfBodyDeclaration =
+    parentType != null &&
+    [
+      SyntaxType.AnnotationTypeBody,
+      SyntaxType.ClassBody,
+      SyntaxType.EnumBody,
+      SyntaxType.InterfaceBody
+    ].includes(parentType);
+  const prefix = isChildOfBodyDeclaration ? [] : [hardline];
+
+  if (contents.length) {
+    return [
+      ...prefix,
+      "{",
+      indent([hardline, ...join(hardline, contents)]),
+      hardline,
+      "}"
+    ];
+  }
+  const danglingComments = printDanglingComments(path, { indent: true });
+  if (danglingComments) {
+    return [...prefix, "{", danglingComments, hardline, "}"];
+  }
+  return [...prefix, "{", hardline, "}"];
 }
 
 export function printBlockStatements(
