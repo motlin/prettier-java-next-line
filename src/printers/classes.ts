@@ -21,7 +21,7 @@ import {
 const { group, hardline, indent, join, line, softline } = builders;
 
 export default {
-  class_declaration(path, print) {
+  class_declaration(path, print, options) {
     const parts: Doc[] = ["class ", path.call(print, "nameNode")];
     const definedClauses = definedKeys(path.node, [
       "superclassNode",
@@ -44,12 +44,14 @@ export default {
         hasChild(path, clause) ? [separator, path.call(print, clause)] : []
       );
       const hasBody = path.node.bodyNode.namedChildren.length > 0;
+      const afterClauses =
+        options?.braceStyle === "next-line" ? "" : hasBody ? separator : " ";
       const clauseGroup = [
         hasTypeParameters && !hasMultipleClauses ? clauses : indent(clauses),
-        hasBody ? separator : " "
+        afterClauses
       ];
       parts.push(hasMultipleClauses ? clauseGroup : group(clauseGroup));
-    } else {
+    } else if (options?.braceStyle !== "next-line") {
       parts.push(" ");
     }
 
@@ -84,14 +86,16 @@ export default {
     return join([",", line], path.map(print, "namedChildren"));
   },
 
-  class_body(path, print) {
+  class_body(path, print, options) {
     return printBlock(
       path,
       printBodyDeclarations(
         path,
         print,
-        (path.parent as NamedNode | null)?.type === SyntaxType.ClassDeclaration
-      )
+        (path.parent as NamedNode | null)?.type ===
+          SyntaxType.ClassDeclaration && options?.braceStyle !== "next-line"
+      ),
+      options
     );
   },
 
@@ -252,8 +256,8 @@ export default {
     return [modifiers, group(declaration), " ", path.call(print, "bodyNode")];
   },
 
-  constructor_body(path, print) {
-    return printBlock(path, printBlockStatements(path, print));
+  constructor_body(path, print, options) {
+    return printBlock(path, printBlockStatements(path, print), options);
   },
 
   explicit_constructor_invocation(path, print) {
@@ -370,7 +374,7 @@ export default {
     if (declarations.length) {
       contents.push(";", hardline, ...declarations);
     }
-    return printBlock(path, contents.length ? [contents] : []);
+    return printBlock(path, contents.length ? [contents] : [], options);
   },
 
   enum_constant(path, print) {
