@@ -1,0 +1,96 @@
+name: 🔬 Pre-release
+
+on:
+  push:
+    branches:
+      - develop
+      - next
+      - beta
+      - alpha
+    paths:
+      - 'packages/**'
+      - '!packages/**/test/**'
+      - '!**.md'
+
+jobs:
+  prerelease:
+    name: 📦 Pre-release
+    runs-on: ubuntu-latest
+    if: github.actor != 'dependabot[bot]'
+    permissions:
+      contents: write
+      packages: write
+      id-token: write
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🔧 Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.mise.toml'
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'yarn'
+
+      - name: 📚 Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: 🏗️ Build packages
+        run: yarn build
+
+      - name: 🧪 Run tests
+        run: yarn test
+
+      - name: 🔍 Run linting
+        run: yarn lint
+
+      - name: 📋 Check formatting
+        run: yarn format:validate
+
+      - name: 🏷️ Determine pre-release tag
+        id: preid
+        run: |
+          BRANCH_NAME="${{ github.ref_name }}"
+          case "$BRANCH_NAME" in
+            develop)
+              echo "preid=dev" >> $GITHUB_OUTPUT
+              ;;
+            next)
+              echo "preid=next" >> $GITHUB_OUTPUT
+              ;;
+            beta)
+              echo "preid=beta" >> $GITHUB_OUTPUT
+              ;;
+            alpha)
+              echo "preid=alpha" >> $GITHUB_OUTPUT
+              ;;
+            *)
+              echo "preid=canary" >> $GITHUB_OUTPUT
+              ;;
+          esac
+
+      - name: 🔖 Version packages
+        run: |
+          yarn lerna:version prerelease --preid ${{ steps.preid.outputs.preid }} --yes --no-push
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 📢 Publish to npm with tag
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
+          yarn lerna publish from-package --dist-tag ${{ steps.preid.outputs.preid }} --yes
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: 📤 Push version tags
+        run: |
+          git push --follow-tags origin ${{ github.ref_name }}
