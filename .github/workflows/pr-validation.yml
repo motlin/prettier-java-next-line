@@ -1,0 +1,54 @@
+name: ✅ PR Validation
+
+on:
+  pull_request_target:
+    types: [opened, edited, synchronize]
+
+jobs:
+  validate-title:
+    name: 📝 Validate PR Title
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🔍 Check PR title format
+        uses: amannn/action-semantic-pull-request@v5
+        with:
+          types: |
+            feat
+            fix
+            docs
+            style
+            refactor
+            perf
+            test
+            build
+            ci
+            chore
+            revert
+          scopes: |
+            maculate-java
+            parser
+            website
+            deps
+            release
+          requireScope: false
+          subjectPattern: ^[A-Z].*[^.]$
+          subjectPatternError: |
+            The subject "{subject}" found in the pull request title "{title}"
+            didn't match the configured pattern. Please ensure that the subject
+            starts with an uppercase letter and doesn't end with a period.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  label:
+    name: 🏷️ Auto Label
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: 🏷️ Label PR based on paths
+        uses: actions/labeler@v5
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          configuration-path: .github/labeler.yml
+          sync-labels: true

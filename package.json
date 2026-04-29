@@ -1,9 +1,9 @@
 {
-  "name": "prettier-plugin-java",
-  "version": "2.10.3",
-  "description": "Prettier Java Plugin",
-  "homepage": "https://jhipster.github.io/prettier-java/",
-  "repository": "https://github.com/jhipster/prettier-java",
+  "name": "maculate-java",
+  "version": "2.10.3-beta.1",
+  "description": "Maculate Java - Prettier Java Plugin with Allman-style braces",
+  "homepage": "https://github.com/motlin/maculate-java",
+  "repository": "https://github.com/motlin/maculate-java",
   "license": "Apache-2.0",
   "type": "module",
   "exports": {

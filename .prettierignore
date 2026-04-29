@@ -3,3 +3,4 @@
 /website/build
 /CHANGELOG.md
 /lerna.json
+.claude/

@@ -1,0 +1,56 @@
+# 🏷️ Auto-labeling configuration for pull requests
+
+maculate-java:
+  - changed-files:
+    - any-glob-to-any-file:
+      - src/**
+      - src/*
+
+website:
+  - changed-files:
+    - any-glob-to-any-file:
+      - website/**
+      - website/*
+
+documentation:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/*.md'
+      - docs/**
+
+tests:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/test/**'
+      - '**/*.test.ts'
+      - '**/*.spec.ts'
+      - '**/*-spec.ts'
+
+ci:
+  - changed-files:
+    - any-glob-to-any-file:
+      - .github/**
+      - .github/workflows/**
+
+dependencies:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/package.json'
+      - '**/yarn.lock'
+      - .npmrc
+
+breaking-change:
+  - head-branch:
+    - '^breaking\/.+$'
+    - '^major\/.+$'
+
+feature:
+  - head-branch:
+    - '^feat\/.+$'
+    - '^feature\/.+$'
+
+bugfix:
+  - head-branch:
+    - '^fix\/.+$'
+    - '^bug\/.+$'
+    - '^hotfix\/.+$'

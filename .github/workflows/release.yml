@@ -1,0 +1,134 @@
+name: 🚀 Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release type (patch, minor, major, prepatch, preminor, premajor, prerelease)'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+          - prepatch
+          - preminor
+          - premajor
+          - prerelease
+      preid:
+        description: 'Prerelease identifier (alpha, beta, rc, etc.)'
+        required: false
+        default: ''
+  push:
+    tags:
+      - 'v*'
+      - 'maculate-java@*'
+
+jobs:
+  release:
+    name: 📦 Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+      id-token: write
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🔧 Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.mise.toml'
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'yarn'
+
+      - name: 📚 Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: 🏗️ Build packages
+        run: yarn build
+
+      - name: 🧪 Run tests
+        run: yarn test
+
+      - name: 🔍 Run linting
+        run: yarn lint
+
+      - name: 📋 Check formatting
+        run: yarn format:validate
+
+      - name: 🔖 Version packages (manual trigger)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          if [ -n "${{ github.event.inputs.preid }}" ]; then
+            yarn lerna:version ${{ github.event.inputs.version }} --preid ${{ github.event.inputs.preid }} --yes
+          else
+            yarn lerna:version ${{ github.event.inputs.version }} --yes
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 📢 Publish to npm
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
+          yarn lerna:publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: 🏷️ Get version info
+        id: version
+        run: |
+          MACULATE_VERSION=$(node -p "require('./package.json').version")
+          echo "maculate_version=$MACULATE_VERSION" >> $GITHUB_OUTPUT
+          echo "tag=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+
+      - name: 📝 Generate release notes
+        id: release_notes
+        run: |
+          cat << EOF > release_notes.md
+          ## 🎉 Release ${{ steps.version.outputs.tag }}
+
+          ### 📦 Package Versions
+          - **maculate-java**: v${{ steps.version.outputs.maculate_version }}
+
+          ### 📥 Installation
+
+          \`\`\`bash
+          npm install --save-dev maculate-java@${{ steps.version.outputs.maculate_version }}
+          \`\`\`
+
+          or with Yarn:
+
+          \`\`\`bash
+          yarn add --dev maculate-java@${{ steps.version.outputs.maculate_version }}
+          \`\`\`
+
+          ### 🔄 What's Changed
+
+          Please see the [CHANGELOG](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for detailed changes.
+
+          ---
+
+          **Full Changelog**: https://github.com/${{ github.repository }}/compare/$(git describe --tags --abbrev=0 HEAD^)...${{ steps.version.outputs.tag }}
+          EOF
+
+      - name: 🎉 Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: release_notes.md
+          draft: false
+          prerelease: ${{ contains(steps.version.outputs.tag, 'alpha') || contains(steps.version.outputs.tag, 'beta') || contains(steps.version.outputs.tag, 'rc') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
