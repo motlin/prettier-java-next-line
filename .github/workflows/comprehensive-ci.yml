@@ -16,6 +16,9 @@ on:
       - 'website/**'
       - 'logo/**'
 
+permissions:
+  contents: read
+
 jobs:
   test:
     name: 🧪 Test
