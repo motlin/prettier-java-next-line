@@ -70,13 +70,15 @@ jobs:
       - name: 🔖 Version packages (manual trigger)
         if: github.event_name == 'workflow_dispatch'
         run: |
-          if [ -n "${{ github.event.inputs.preid }}" ]; then
-            yarn lerna:version ${{ github.event.inputs.version }} --preid ${{ github.event.inputs.preid }} --yes
+          if [ -n "$RELEASE_PREID" ]; then
+            yarn lerna:version "$RELEASE_VERSION" --preid "$RELEASE_PREID" --yes
           else
-            yarn lerna:version ${{ github.event.inputs.version }} --yes
+            yarn lerna:version "$RELEASE_VERSION" --yes
           fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_VERSION: ${{ github.event.inputs.version }}
+          RELEASE_PREID: ${{ github.event.inputs.preid }}
 
       - name: 📢 Publish to npm
         run: |
@@ -88,39 +90,45 @@ jobs:
 
       - name: 🏷️ Get version info
         id: version
+        env:
+          REF_NAME: ${{ github.ref_name }}
         run: |
           MACULATE_VERSION=$(node -p "require('./package.json').version")
-          echo "maculate_version=$MACULATE_VERSION" >> $GITHUB_OUTPUT
-          echo "tag=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          echo "maculate_version=$MACULATE_VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=$REF_NAME" >> "$GITHUB_OUTPUT"
 
       - name: 📝 Generate release notes
         id: release_notes
+        env:
+          RELEASE_TAG: ${{ steps.version.outputs.tag }}
+          MACULATE_VERSION: ${{ steps.version.outputs.maculate_version }}
+          REPOSITORY: ${{ github.repository }}
         run: |
           cat << EOF > release_notes.md
-          ## 🎉 Release ${{ steps.version.outputs.tag }}
+          ## 🎉 Release ${RELEASE_TAG}
 
           ### 📦 Package Versions
-          - **maculate-java**: v${{ steps.version.outputs.maculate_version }}
+          - **maculate-java**: v${MACULATE_VERSION}
 
           ### 📥 Installation
 
           \`\`\`bash
-          npm install --save-dev maculate-java@${{ steps.version.outputs.maculate_version }}
+          npm install --save-dev maculate-java@${MACULATE_VERSION}
           \`\`\`
 
           or with Yarn:
 
           \`\`\`bash
-          yarn add --dev maculate-java@${{ steps.version.outputs.maculate_version }}
+          yarn add --dev maculate-java@${MACULATE_VERSION}
           \`\`\`
 
           ### 🔄 What's Changed
 
-          Please see the [CHANGELOG](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for detailed changes.
+          Please see the [CHANGELOG](https://github.com/${REPOSITORY}/blob/main/CHANGELOG.md) for detailed changes.
 
           ---
 
-          **Full Changelog**: https://github.com/${{ github.repository }}/compare/$(git describe --tags --abbrev=0 HEAD^)...${{ steps.version.outputs.tag }}
+          **Full Changelog**: https://github.com/${REPOSITORY}/compare/$(git describe --tags --abbrev=0 HEAD^)...${RELEASE_TAG}
           EOF
 
       - name: 🎉 Create GitHub Release
