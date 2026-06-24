@@ -1,5 +1,7 @@
 name: Prettier-java
 on: [push, pull_request]
+permissions:
+  contents: read
 jobs:
   tests:
     name: unit tests (node ${{ matrix.node_version }})
