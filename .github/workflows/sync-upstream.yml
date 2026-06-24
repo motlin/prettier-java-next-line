@@ -22,7 +22,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -90,7 +90,7 @@ jobs:
 
       - name: Create Pull Request
         if: steps.sync.outputs.has_changes == 'true'
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@4e1beaa7521e8b457b572c090b25bd3db56bf1c5 # v5.0.3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ steps.sync.outputs.sync_branch }}
@@ -125,7 +125,7 @@ jobs:
 
       - name: Create Issue for Conflicts
         if: steps.sync.outputs.has_changes == 'true' && steps.sync.outputs.merge_success == 'false'
-        uses: peter-evans/create-issue-from-file@v4
+        uses: peter-evans/create-issue-from-file@433e51abf769039ee20ba1293a088ca19d573b7f # v4.0.1
         with:
           title: '⚠️ Upstream sync conflicts detected'
           content-filepath: /dev/stdin
