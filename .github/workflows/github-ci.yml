@@ -54,4 +54,6 @@ jobs:
       - name: Build prettier-plugin-java
         run: yarn run build
       - name: Run e2e tests
-        run: yarn run test:${{ matrix.test_repository }}
+        env:
+          TEST_REPOSITORY: ${{ matrix.test_repository }}
+        run: yarn run "test:$TEST_REPOSITORY"
