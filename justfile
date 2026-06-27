@@ -17,7 +17,7 @@ lint:
     yarn lint
 
 # Run all checks (build, lint, test)
-ci:
+build-ci:
     yarn ci
 
 # Create a local package for testing
