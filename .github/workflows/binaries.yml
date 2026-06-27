@@ -15,10 +15,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           path: "prettier-java"
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@3235b876344d2a9aa001b8d1453c930bba69e610 # v3.9.1
         with:
           node-version: 20.x
           cache: false
@@ -36,7 +36,7 @@ jobs:
           npm i
           npm link java-parser
       - name: Checkout Prettier
-        uses: actions/checkout@v2
+        uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2.7.0
         with:
           repository: prettier/prettier
           ref: refs/tags/${{ env.PRETTIER_CORE_LIB_VERSION }}
@@ -54,7 +54,7 @@ jobs:
           cd $GITHUB_WORKSPACE/prettier
           pkg package.json -o $GITHUB_WORKSPACE/prettier-java-${GITHUB_REF##*/} --targets node10-linux-x64,node10-macos-x64,node10-win-x64
       - name: Upload the artifacts
-        uses: skx/github-action-publish-binaries@master
+        uses: skx/github-action-publish-binaries@44887b225ceca96efd8a912d39c09ad70312af31 # master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
