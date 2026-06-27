@@ -2,8 +2,12 @@ on:
   release:
     types: [created]
 name: Binary artifacts
+permissions:
+  contents: read
 jobs:
   generate:
+    permissions:
+      contents: write # for skx/github-action-publish-binaries to upload release assets
     env:
       # The version needs to match with the one used in the printer
       PRETTIER_CORE_LIB_VERSION: 3.2.5
