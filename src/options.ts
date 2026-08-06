@@ -1,4 +1,4 @@
-import type { SupportOptions } from "prettier";
+import type { SupportOptions } from "maculate";
 
 export default {
   arrowParens: {

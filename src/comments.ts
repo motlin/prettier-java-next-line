@@ -1,5 +1,5 @@
-import { util, type AstPath, type Doc } from "prettier";
-import { builders } from "prettier/doc";
+import { util, type AstPath, type Doc } from "maculate";
+import { builders } from "maculate/doc";
 import {
   SyntaxType,
   type ArrayAccessNode,

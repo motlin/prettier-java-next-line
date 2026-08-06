@@ -1,5 +1,5 @@
-import type { AstPath, Doc, Options, ParserOptions } from "prettier";
-import { builders, utils } from "prettier/doc";
+import type { AstPath, Doc, Options, ParserOptions } from "maculate";
+import { builders, utils } from "maculate/doc";
 import {
   SyntaxType,
   type ArrayInitializerNode,

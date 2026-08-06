@@ -7,10 +7,6 @@ on:
       - next
       - beta
       - alpha
-    paths:
-      - 'packages/**'
-      - '!packages/**/test/**'
-      - '!**.md'
 
 jobs:
   prerelease:

@@ -3,7 +3,7 @@ import { spawnSync } from "node:child_process";
 import { cpSync, existsSync, readdirSync, readFileSync, rmSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import prettier from "prettier";
+import maculate from "maculate";
 import plugin from "../dist/index.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -116,7 +116,7 @@ export async function formatJavaSnippet({
   snippet: string;
   prettierOptions?: Record<string, unknown>;
 }) {
-  return await prettier.format(snippet, {
+  return await maculate.format(snippet, {
     parser: "java",
     plugins: [plugin],
     ...prettierOptions
