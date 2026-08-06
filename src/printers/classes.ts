@@ -1,5 +1,5 @@
-import type { Doc } from "prettier";
-import { builders } from "prettier/doc";
+import type { Doc } from "maculate";
+import { builders } from "maculate/doc";
 import { SyntaxType, type NamedNode } from "../node-types.ts";
 import {
   definedKeys,

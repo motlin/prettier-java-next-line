@@ -68,6 +68,7 @@
     "husky": "^9.1.7",
     "lerna": "^10.0.0",
     "lint-staged": "^17.0.2",
+    "maculate": "npm:prettier@^3.8.1",
     "mitata": "^1.0.34",
     "mocha": "^11.7.5",
     "postcss": "^8.5.15",
@@ -79,7 +80,7 @@
     "typescript-eslint": "^8.57.1"
   },
   "peerDependencies": {
-    "prettier": "^3.0.0"
+    "maculate": ">=3.10.0-0 <4"
   },
   "packageManager": "yarn@1.22.22"
 }

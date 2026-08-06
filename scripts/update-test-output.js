@@ -8,7 +8,7 @@ import {
 } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import prettier from "prettier";
+import maculate from "maculate";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -71,15 +71,15 @@ const updateTestOutput = async () => {
           if (process.argv.indexOf("-doc") > -1) {
             console.log(
               "doc:",
-              await prettier.__debug.formatDoc(
-                await prettier.__debug.printToDoc(newExpectedText, {
+              await maculate.__debug.formatDoc(
+                await maculate.__debug.printToDoc(newExpectedText, {
                   parser: "java",
                   plugins: [path.resolve(__dirname, "../dist/index.mjs")]
                 })
               )
             );
           }
-          newExpectedText = await prettier.format(newExpectedText, {
+          newExpectedText = await maculate.format(newExpectedText, {
             parser: "java",
             plugins: [path.resolve(__dirname, "../dist/index.mjs")],
             tabWidth: 2,
