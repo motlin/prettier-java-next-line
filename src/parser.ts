@@ -1,4 +1,4 @@
-import type Maculate from "maculate";
+import type Prettier from "prettier";
 import { Language, Parser, type Node } from "web-tree-sitter";
 import { determinePrettierIgnoreRanges } from "./comments.ts";
 import {
@@ -35,7 +35,7 @@ export default {
   locEnd(node) {
     return node.end.index;
   }
-} satisfies Maculate.Parser<SyntaxNode | CommentNode>;
+} satisfies Prettier.Parser<SyntaxNode | CommentNode>;
 
 const parser = (async () => {
   await Parser.init();

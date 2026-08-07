@@ -1,61 +1,80 @@
-# Maculate Java
+# Prettier Java Next Line
 
-Maculate Java is a thin fork of
-[prettier-plugin-java](https://github.com/jhipster/prettier-java) for the
-[Maculate](https://github.com/motlin/maculate) formatter. It adds configurable
-same-line and next-line brace styles for Java.
+Prettier Java Next Line is a fork of
+[prettier-plugin-java](https://github.com/jhipster/prettier-java) with
+configurable opening-brace placement. It defaults to Allman-style, next-line
+braces.
+
+The option was proposed upstream in
+[jhipster/prettier-java#840](https://github.com/jhipster/prettier-java/pull/840)
+and declined because upstream intentionally preserves one brace style.
 
 ## Installation
 
+Use it with Prettier:
+
 ```bash
-npm install --save-dev maculate maculate-java
+npm install --save-dev prettier prettier-java-next-line
+```
+
+Or use the matching Prettier Next Line fork through an npm alias:
+
+```bash
+npm install --save-dev \
+  prettier@npm:prettier-next-line \
+  prettier-java-next-line
 ```
 
 ## Configuration
 
-Load the plugin explicitly in your Maculate configuration:
+Load the plugin explicitly:
 
 ```json
 {
-  "plugins": ["maculate-java"],
-  "braceStyle": "next-line"
+  "plugins": ["prettier-java-next-line"]
 }
 ```
 
-`braceStyle` accepts:
+Next-line braces are the default. Use the inherited K&R placement when needed:
 
-- `"same-line"` for opening braces on the declaration line;
-- `"next-line"` for Allman-style opening braces.
+```json
+{
+  "plugins": ["prettier-java-next-line"],
+  "braceStyle": "same-line"
+}
+```
+
+## Spotless Maven
+
+Spotless loads a package named `prettier`, so install Prettier Next Line under
+that name with an npm alias:
+
+```xml
+<prettier>
+    <devDependencies>
+        <prettier>npm:prettier-next-line@3.10.0-dev</prettier>
+        <prettier-java-next-line>2.10.3-beta.1</prettier-java-next-line>
+    </devDependencies>
+    <configFile>.prettierrc.json5</configFile>
+    <config>
+        <parser>java</parser>
+        <plugins>prettier-java-next-line</plugins>
+    </config>
+</prettier>
+```
 
 ## CLI
 
-Check Java formatting without changing files:
+With upstream Prettier:
 
 ```bash
-npx maculate --check --plugin=maculate-java "**/*.java"
+npx prettier --check --plugin=prettier-java-next-line "**/*.java"
+npx prettier --write --plugin=prettier-java-next-line "**/*.java"
 ```
 
-Format Java files in place:
-
-```bash
-npx maculate --write --plugin=maculate-java "**/*.java"
-```
+With the aliased Prettier Next Line fork, use `npx prettier-next-line` instead.
 
 ## Example
-
-Input:
-
-```java
-public class Example {
-    public void method() {
-        if (condition) {
-            doSomething();
-        }
-    }
-}
-```
-
-With `"braceStyle": "next-line"`:
 
 ```java
 public class Example
@@ -72,9 +91,9 @@ public class Example
 
 ## Upstream
 
-Maculate Java follows
+Prettier Java Next Line tracks
 [jhipster/prettier-java](https://github.com/jhipster/prettier-java) and keeps
-its fork-specific changes focused on Maculate compatibility and brace style.
+fork-specific behavior focused on brace placement.
 
 ## License
 

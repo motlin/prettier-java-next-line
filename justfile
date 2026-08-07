@@ -1,22 +1,22 @@
-# Maculate Java - Prettier Java Plugin with Allman-style braces
+# Prettier Java Next Line - Prettier Java Plugin with Allman-style braces
 
-# List all available commands
+# just --list --unsorted
 default:
     @just --list --unsorted
 
-# Build the project
+# yarn build
 build:
     yarn build
 
-# Run tests
+# yarn test
 test:
     yarn test
 
-# Run lint
+# yarn lint
 lint:
     yarn lint
 
-# Run all checks (build, lint, test)
+# yarn ci
 build-ci:
     yarn ci
 
@@ -32,9 +32,9 @@ pack:
     npm pack --pack-destination=./local-packages .
 
     echo "✅ Package created successfully!"
-    echo "📦 Package location: ./local-packages/maculate-java-$(node -pe "require('./package.json').version").tgz"
+    echo "📦 Package location: ./local-packages/prettier-java-next-line-$(node -pe "require('./package.json').version").tgz"
 
-# Install the local package in other projects
+# ./install-local.sh
 install-local:
     ./install-local.sh
 
@@ -44,6 +44,6 @@ clean:
     rm -rf local-packages/*.tgz
     rm -rf node_modules
 
-# Update test outputs
+# yarn update-test-outputs
 update-test-outputs:
     yarn update-test-outputs

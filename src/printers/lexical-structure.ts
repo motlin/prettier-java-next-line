@@ -1,4 +1,4 @@
-import { builders } from "maculate/doc";
+import { builders } from "prettier/doc";
 import { SyntaxType } from "../node-types.ts";
 import {
   printTextBlock,
