@@ -23,7 +23,7 @@ on:
   push:
     tags:
       - 'v*'
-      - 'maculate-java@*'
+      - 'prettier-java-next-line@*'
 
 jobs:
   release:
@@ -48,7 +48,7 @@ jobs:
       - name: 📦 Setup Node.js
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
-          node-version-file: '.mise.toml'
+          node-version: 22
           registry-url: 'https://registry.npmjs.org'
           cache: false
 
@@ -93,33 +93,33 @@ jobs:
         env:
           REF_NAME: ${{ github.ref_name }}
         run: |
-          MACULATE_VERSION=$(node -p "require('./package.json').version")
-          echo "maculate_version=$MACULATE_VERSION" >> "$GITHUB_OUTPUT"
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          echo "package_version=$PACKAGE_VERSION" >> "$GITHUB_OUTPUT"
           echo "tag=$REF_NAME" >> "$GITHUB_OUTPUT"
 
       - name: 📝 Generate release notes
         id: release_notes
         env:
           RELEASE_TAG: ${{ steps.version.outputs.tag }}
-          MACULATE_VERSION: ${{ steps.version.outputs.maculate_version }}
+          PACKAGE_VERSION: ${{ steps.version.outputs.package_version }}
           REPOSITORY: ${{ github.repository }}
         run: |
           cat << EOF > release_notes.md
           ## 🎉 Release ${RELEASE_TAG}
 
           ### 📦 Package Versions
-          - **maculate-java**: v${MACULATE_VERSION}
+          - **prettier-java-next-line**: v${PACKAGE_VERSION}
 
           ### 📥 Installation
 
           \`\`\`bash
-          npm install --save-dev maculate-java@${MACULATE_VERSION}
+          npm install --save-dev prettier-java-next-line@${PACKAGE_VERSION}
           \`\`\`
 
           or with Yarn:
 
           \`\`\`bash
-          yarn add --dev maculate-java@${MACULATE_VERSION}
+          yarn add --dev prettier-java-next-line@${PACKAGE_VERSION}
           \`\`\`
 
           ### 🔄 What's Changed
