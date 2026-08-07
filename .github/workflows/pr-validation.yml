@@ -28,7 +28,7 @@ jobs:
             chore
             revert
           scopes: |
-            maculate-java
+            prettier-java-next-line
             parser
             website
             deps

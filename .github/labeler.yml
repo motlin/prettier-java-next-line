@@ -1,6 +1,6 @@
 # 🏷️ Auto-labeling configuration for pull requests
 
-maculate-java:
+prettier-java-next-line:
   - changed-files:
     - any-glob-to-any-file:
       - src/**

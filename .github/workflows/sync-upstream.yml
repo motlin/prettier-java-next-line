@@ -125,31 +125,38 @@ jobs:
 
       - name: Create Issue for Conflicts
         if: steps.sync.outputs.has_changes == 'true' && steps.sync.outputs.merge_success == 'false'
-        uses: peter-evans/create-issue-from-file@433e51abf769039ee20ba1293a088ca19d573b7f # v4.0.1
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
         with:
-          title: '⚠️ Upstream sync conflicts detected'
-          content-filepath: /dev/stdin
-          labels: upstream-sync, needs-attention
-          assignees: ${{ github.repository_owner }}
-        with: |
-          ## Upstream Sync Conflicts
+          script: |
+            const body = [
+              '## Upstream Sync Conflicts',
+              '',
+              'The automated sync with upstream prettier-java has detected merge conflicts that require manual resolution.',
+              '',
+              '**Pull Request**: See the latest PR with the `upstream-sync` and `has-conflicts` labels.',
+              '',
+              '### Affected files',
+              '',
+              'Check the PR description for the list of conflicting files.',
+              '',
+              '### Resolution steps',
+              '',
+              '1. Check out the sync branch locally',
+              '2. Resolve conflicts manually',
+              '3. Test the changes',
+              '4. Push the resolved changes',
+              '5. Merge the PR when ready',
+              '',
+              '---',
+              '',
+              '*This issue was automatically created by the upstream sync workflow.*'
+            ].join('\n');
 
-          The automated sync with upstream prettier-java has detected merge conflicts that require manual resolution.
-
-          **Pull Request**: See the latest PR with the `upstream-sync` and `has-conflicts` labels
-
-          ### Affected files:
-
-          Check the PR description for the list of conflicting files.
-
-          ### Resolution steps:
-
-          1. Checkout the sync branch locally
-          2. Resolve conflicts manually
-          3. Test the changes
-          4. Push the resolved changes
-          5. Merge the PR when ready
-
-          ---
-
-          *This issue was automatically created by the upstream sync workflow.*
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '⚠️ Upstream sync conflicts detected',
+              body,
+              labels: ['upstream-sync', 'needs-attention'],
+              assignees: [context.repo.owner]
+            });

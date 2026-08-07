@@ -1,13 +1,13 @@
 # 🔧 GitHub Configuration
 
-This directory contains GitHub-specific configuration for the Maculate Java project.
+This directory contains GitHub-specific configuration for the Prettier Java Next Line project.
 
 ## 📁 Structure
 
 ```
 .github/
 ├── workflows/              # GitHub Actions workflows
-│   ├── comprehensive-ci.yml # Comprehensive CI (multi-OS, coverage)
+│   ├── github-ci.yml      # Upstream unit and integration tests
 │   ├── release.yml        # Production release workflow
 │   ├── prerelease.yml     # Automatic pre-releases
 │   └── pr-validation.yml  # Pull request validation
@@ -17,11 +17,10 @@ This directory contains GitHub-specific configuration for the Maculate Java proj
 
 ## 🚀 Workflows
 
-### Comprehensive CI (comprehensive-ci.yml)
-- Runs on every push to main and on pull requests
-- Tests on multiple OS (Ubuntu, macOS, Windows) and Node versions (18, 20, 22)
-- Runs linting, formatting checks, and tests
-- Generates coverage reports
+### Upstream CI (github-ci.yml)
+- Runs on pushes and pull requests
+- Tests supported Node versions 22 and 24
+- Runs the upstream unit and JHipster integration suites
 
 ### Release (release.yml)
 - Manual trigger via GitHub Actions UI
@@ -43,12 +42,11 @@ This directory contains GitHub-specific configuration for the Maculate Java proj
 Configure these in Settings → Secrets → Actions:
 
 - `NPM_TOKEN`: npm authentication token for publishing packages
-- `CODECOV_TOKEN`: (Optional) For uploading coverage reports
 
 ## 🏷️ Labels
 
 The labeler automatically adds labels based on:
-- **File paths**: maculate-java, website, documentation, tests, ci, dependencies
+- **File paths**: prettier-java-next-line, website, documentation, tests, ci, dependencies
 - **Branch names**: feature, bugfix, breaking-change
 
 ## 📦 Dependabot

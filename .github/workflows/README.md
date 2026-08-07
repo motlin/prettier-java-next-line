@@ -1,6 +1,6 @@
 # GitHub Actions Workflows
 
-This directory contains automated workflows for the Maculate Java project.
+This directory contains automated workflows for the Prettier Java Next Line project.
 
 ## Workflows
 
