@@ -170,7 +170,10 @@ export function printArrayInitializer(
     list.push(ifBreak(","));
   }
 
-  if (options.braceStyle === "next-line") {
+  if (
+    options.braceStyle === "next-line" &&
+    path.node.type === SyntaxType.ArrayInitializer
+  ) {
     const block = ["{", indent([line, ...list]), line, "}"];
     return isNestedArray(path) ? block : [hardline, ...block];
   }

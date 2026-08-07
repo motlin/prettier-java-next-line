@@ -170,7 +170,9 @@ enum A {
   void b() {}
 }
 
-enum Aaaaaaaaaa implements Bbbbbbbbbb {
+enum Aaaaaaaaaa
+  implements Bbbbbbbbbb
+{
   A,
 }
 
@@ -205,4 +207,5 @@ enum Aaaaaaaaaa
     Gggggggggg {}
 
 @A
-enum B implements C {}
+enum B
+  implements C {}

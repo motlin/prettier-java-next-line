@@ -39,17 +39,20 @@ export default {
     }
 
     if (definedClauses.length) {
-      const separator = hasTypeParameters && !hasMultipleClauses ? " " : line;
-      const clauses = definedClauses.flatMap(clause =>
-        hasChild(path, clause) ? [separator, path.call(print, clause)] : []
-      );
+      const clauses = definedClauses.flatMap(clause => {
+        if (!hasChild(path, clause)) {
+          return [];
+        }
+        const separator =
+          clause === "superclassNode" || clause === "interfacesNode"
+            ? hardline
+            : line;
+        return [separator, path.call(print, clause)];
+      });
       const hasBody = path.node.bodyNode.namedChildren.length > 0;
       const afterClauses =
-        options?.braceStyle === "next-line" ? "" : hasBody ? separator : " ";
-      const clauseGroup = [
-        hasTypeParameters && !hasMultipleClauses ? clauses : indent(clauses),
-        afterClauses
-      ];
+        options?.braceStyle === "next-line" ? "" : hasBody ? line : " ";
+      const clauseGroup = [indent(clauses), afterClauses];
       parts.push(hasMultipleClauses ? clauseGroup : group(clauseGroup));
     } else if (options?.braceStyle !== "next-line") {
       parts.push(" ");
@@ -148,7 +151,9 @@ export default {
     );
     if (throwsIndex !== -1) {
       declaration.push(
-        group(indent([line, path.call(print, "namedChildren", throwsIndex)]))
+        group(
+          indent([hardline, path.call(print, "namedChildren", throwsIndex)])
+        )
       );
     }
 
@@ -249,7 +254,9 @@ export default {
     );
     if (throwsIndex !== -1) {
       declaration.push(
-        group(indent([line, path.call(print, "namedChildren", throwsIndex)]))
+        group(
+          indent([hardline, path.call(print, "namedChildren", throwsIndex)])
+        )
       );
     }
 
@@ -335,7 +342,7 @@ export default {
     if (hasChild(path, "interfacesNode")) {
       const hasBody = path.node.bodyNode.namedChildren.length > 0;
       parts.push(
-        indent([line, path.call(print, "interfacesNode")]),
+        indent([hardline, path.call(print, "interfacesNode")]),
         hasBody ? line : " "
       );
     } else {
@@ -401,21 +408,12 @@ export default {
       parts.push(group(path.call(print, "type_parametersNode")));
     }
 
-    parts.push(path.call(print, "parametersNode"));
+    parts.push(group(path.call(print, "parametersNode")));
 
     if (hasChild(path, "interfacesNode")) {
-      const hasParameters = path.node.parametersNode.namedChildren.length > 0;
       const hasBody = path.node.bodyNode.namedChildren.length > 0;
-      const interfaces = [
-        hasParameters ? " " : line,
-        path.call(print, "interfacesNode")
-      ];
-      parts.push(
-        group([
-          hasParameters ? interfaces : indent(interfaces),
-          hasBody ? line : " "
-        ])
-      );
+      const interfaces = [hardline, path.call(print, "interfacesNode")];
+      parts.push(group([indent(interfaces), hasBody ? line : " "]));
     } else {
       parts.push(" ");
     }

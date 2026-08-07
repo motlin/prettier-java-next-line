@@ -25,7 +25,10 @@ class A<B, C> {
   }
 }
 
-class Aaaaaaaaaa<Bbbbbbbbbb> extends Cccccccccc implements Dddddddddd {
+class Aaaaaaaaaa<Bbbbbbbbbb>
+  extends Cccccccccc
+  implements Dddddddddd
+{
 
   void a() {}
 }
@@ -45,7 +48,9 @@ class Aaaaaaaaaa<Bbbbbbbbbb, Cccccccccc>
 class Aaaaaaaaaa<
   Bbbbbbbbbb,
   Cccccccccc
-> extends Dddddddddd<Eeeeeeeeee, Ffffffffff> {
+>
+  extends Dddddddddd<Eeeeeeeeee, Ffffffffff>
+{
 
   void a() {}
 }
@@ -53,13 +58,9 @@ class Aaaaaaaaaa<
 class Aaaaaaaaaa<
   Bbbbbbbbbb,
   Cccccccccc
-> extends Dddddddddd<
-  Eeeeeeeeee,
-  Ffffffffff,
-  Gggggggggg,
-  Hhhhhhhhhh,
-  Iiiiiiiiii
-> {
+>
+  extends Dddddddddd<Eeeeeeeeee, Ffffffffff, Gggggggggg, Hhhhhhhhhh, Iiiiiiiiii>
+{
 
   void a() {}
 }

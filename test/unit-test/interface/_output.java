@@ -68,7 +68,10 @@ public interface Filterer<G, E> {
   //
 }
 
-sealed class Aaaaaaaaaa<Bbbbbbbbbb> extends Cccccccccc permits Dddddddddd {
+sealed class Aaaaaaaaaa<Bbbbbbbbbb>
+  extends Cccccccccc
+  permits Dddddddddd
+{
 
   void a() {}
 }
@@ -88,7 +91,9 @@ sealed class Aaaaaaaaaa<Bbbbbbbbbb, Cccccccccc>
 class Aaaaaaaaaa<
   Bbbbbbbbbb,
   Cccccccccc
-> extends Dddddddddd<Eeeeeeeeee, Ffffffffff> {
+>
+  extends Dddddddddd<Eeeeeeeeee, Ffffffffff>
+{
 
   void a() {}
 }
@@ -96,13 +101,9 @@ class Aaaaaaaaaa<
 class Aaaaaaaaaa<
   Bbbbbbbbbb,
   Cccccccccc
-> extends Dddddddddd<
-  Eeeeeeeeee,
-  Ffffffffff,
-  Gggggggggg,
-  Hhhhhhhhhh,
-  Iiiiiiiiii
-> {
+>
+  extends Dddddddddd<Eeeeeeeeee, Ffffffffff, Gggggggggg, Hhhhhhhhhh, Iiiiiiiiii>
+{
 
   void a() {}
 }

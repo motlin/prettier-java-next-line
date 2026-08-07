@@ -1,4 +1,7 @@
-public sealed class Rectangle implements Shape permits Square {
+public sealed class Rectangle
+  implements Shape
+  permits Square
+{
 
   private final double length;
   private final double height;
@@ -14,7 +17,9 @@ public sealed class Rectangle implements Shape permits Square {
   }
 }
 
-public non-sealed class RightTriangle implements Triangle {
+public non-sealed class RightTriangle
+  implements Triangle
+{
 
   private final double adjacent;
   private final double opposite;
@@ -29,7 +34,8 @@ public non-sealed class RightTriangle implements Triangle {
     interface People {
       String name();
     }
-    record Person(String name) implements People {}
+    record Person(String name)
+      implements People {}
     record Persons(String... names) {}
 
     People p = new Person("John Doe");
@@ -54,7 +60,8 @@ public sealed interface Shape permits Circle, Rectangle, Triangle, Unicorn {
   }
 }
 
-public non-sealed interface Triangle extends Shape {}
+public non-sealed interface Triangle
+  extends Shape {}
 
 public sealed interface Shape
   permits
@@ -90,14 +97,16 @@ public class NestedSealedClasses {
 
   public abstract static sealed class SealedParent permits SealedChild {}
 
-  static final class SealedChild extends SealedParent {}
+  static final class SealedChild
+    extends SealedParent {}
 }
 
 public class NestedNonSealedClasses {
 
   public abstract static non-sealed class NonSealedParent {}
 
-  static final class SealedChild extends NonSealedParent {}
+  static final class SealedChild
+    extends NonSealedParent {}
 }
 
 public interface Test {
@@ -109,5 +118,6 @@ public interface Test {
 
   public abstract static non-sealed class SealedParent {}
 
-  static final class SealedChild extends SealedParent {}
+  static final class SealedChild
+    extends SealedParent {}
 }

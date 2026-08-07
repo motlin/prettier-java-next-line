@@ -12,10 +12,10 @@ import {
   type NamedNodePrinters
 } from "./helpers.ts";
 
-const { group, indent, join, line } = builders;
+const { group, hardline, indent, join, line } = builders;
 
 export default {
-  interface_declaration(path, print) {
+  interface_declaration(path, print, options) {
     const parts = ["interface ", path.call(print, "nameNode")];
 
     const extendsInterfacesIndex = path.node.namedChildren.findIndex(
@@ -34,21 +34,20 @@ export default {
     }
 
     if (hasExtendsInterfaces || hasPermits) {
-      const separator = hasTypeParameters && !hasMultipleClauses ? " " : line;
       const clauses: Doc[] = [];
       if (hasExtendsInterfaces) {
         clauses.push(
-          separator,
+          hardline,
           path.call(print, "namedChildren", extendsInterfacesIndex)
         );
       }
       if (hasPermits) {
-        clauses.push(separator, path.call(print, "permitsNode"));
+        clauses.push(line, path.call(print, "permitsNode"));
       }
       const hasBody = path.node.bodyNode.namedChildren.length > 0;
       const clauseGroup = [
-        hasTypeParameters && !hasMultipleClauses ? clauses : indent(clauses),
-        hasBody ? separator : " "
+        indent(clauses),
+        options?.braceStyle === "next-line" ? "" : hasBody ? line : " "
       ];
       parts.push(hasMultipleClauses ? clauseGroup : group(clauseGroup));
     } else {

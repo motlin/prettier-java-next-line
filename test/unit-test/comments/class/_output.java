@@ -200,7 +200,9 @@ public final class ArrayTable<R, C, V>
   private abstract static class ArrayMap<
     K,
     V
-  > extends IteratorBasedAbstractMap<K, V> {
+  >
+    extends IteratorBasedAbstractMap<K, V>
+  {
 
     private final ImmutableMap<K, Integer> keyIndex;
 
@@ -636,7 +638,9 @@ public final class ArrayTable<R, C, V>
       : new Column(columnIndex);
   }
 
-  private class Column extends ArrayMap<R, V> {
+  private class Column
+    extends ArrayMap<R, V>
+  {
 
     final int columnIndex;
 
@@ -681,7 +685,9 @@ public final class ArrayTable<R, C, V>
   }
 
   @WeakOuter
-  private class ColumnMap extends ArrayMap<C, Map<R, V>> {
+  private class ColumnMap
+    extends ArrayMap<C, Map<R, V>>
+  {
 
     private ColumnMap() {
       super(columnKeyToIndex);
@@ -726,7 +732,9 @@ public final class ArrayTable<R, C, V>
     return rowIndex == null ? ImmutableMap.<C, V>of() : new Row(rowIndex);
   }
 
-  private class Row extends ArrayMap<C, V> {
+  private class Row
+    extends ArrayMap<C, V>
+  {
 
     final int rowIndex;
 
@@ -771,7 +779,9 @@ public final class ArrayTable<R, C, V>
   }
 
   @WeakOuter
-  private class RowMap extends ArrayMap<R, Map<C, V>> {
+  private class RowMap
+    extends ArrayMap<R, Map<C, V>>
+  {
 
     private RowMap() {
       super(rowKeyToIndex);
@@ -845,7 +855,8 @@ public final class ArrayTable<R, C, V>
   // Bug Fix: #262
   @Test
   @Transactional
-  public void getAllCountries() throws Exception {
+  public void getAllCountries()
+    throws Exception {
     // Initialize the database
     countryRepository.saveAndFlush(country);
 

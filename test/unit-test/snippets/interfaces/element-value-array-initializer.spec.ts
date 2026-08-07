@@ -8,6 +8,16 @@ describe("element Value Array Initializer", () => {
     });
   });
 
+  it("keeps a short elementValueArrayInitializer inline with next-line braces", () => {
+    expectSnippetToBeFormatted({
+      snippet: '{"alpha", "beta", "charlie"}',
+      expectedOutput: '{ "alpha", "beta", "charlie" }',
+      prettierOptions: {
+        braceStyle: "next-line"
+      }
+    });
+  });
+
   describe("Trailing Commas", () => {
     it("should remove extra comma in elementValueArrayInitializer by default", () => {
       expectSnippetToBeFormatted({

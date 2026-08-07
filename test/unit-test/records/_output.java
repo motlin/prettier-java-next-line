@@ -111,7 +111,8 @@ class MySplitRecordConstructor {
 }
 
 public interface MyInterface {
-  record MyRecord(String param) implements MyInterface {}
+  record MyRecord(String param)
+    implements MyInterface {}
 }
 
 public interface MyInterface {
@@ -122,7 +123,8 @@ public interface MyInterface {
     String param,
     String param,
     String param
-  ) implements MyInterface {}
+  )
+    implements MyInterface {}
 }
 
 public record Record(
@@ -158,19 +160,20 @@ public record Record(
   Status status
 ) {}
 
-record Aaaaaaaaaa<Bbbbbbbbbb>(Cccccccccc cccccccccc) implements Dddddddddd {
+record Aaaaaaaaaa<Bbbbbbbbbb>(Cccccccccc cccccccccc)
+  implements Dddddddddd
+{
   void a() {}
 }
 
-record Aaaaaaaaaa<Bbbbbbbbbb, Cccccccccc>(
-  Dddddddddd dddddddddd
-) implements Eeeeeeeeee {
+record Aaaaaaaaaa<Bbbbbbbbbb, Cccccccccc>(Dddddddddd dddddddddd)
+  implements Eeeeeeeeee
+{
   void a() {}
 }
 
-record Aaaaaaaaaa<Bbbbbbbbbb, Cccccccccc>(
-  Dddddddddd dddddddddd
-) implements Eeeeeeeeee {}
+record Aaaaaaaaaa<Bbbbbbbbbb, Cccccccccc>(Dddddddddd dddddddddd)
+  implements Eeeeeeeeee {}
 
 record Aaaaaaaaaa<
   Bbbbbbbbbb,
@@ -179,9 +182,9 @@ record Aaaaaaaaaa<
   Eeeeeeeeee,
   Ffffffffff,
   Gggggggggg
->(
-  Hhhhhhhhhh Hhhhhhhhhh
-) implements Iiiiiiiiii {
+>(Hhhhhhhhhh Hhhhhhhhhh)
+  implements Iiiiiiiiii
+{
   void a() {}
 }
 
@@ -192,9 +195,8 @@ record Aaaaaaaaaa<
   Eeeeeeeeee,
   Ffffffffff,
   Gggggggggg
->(
-  Hhhhhhhhhh Hhhhhhhhhh
-) implements Iiiiiiiiii {}
+>(Hhhhhhhhhh Hhhhhhhhhh)
+  implements Iiiiiiiiii {}
 
 record Aaaaaaaaaa<
   Bbbbbbbbbb,
@@ -203,15 +205,14 @@ record Aaaaaaaaaa<
   Eeeeeeeeee,
   Ffffffffff,
   Gggggggggg
->(
-  Hhhhhhhhhh Hhhhhhhhhh
-) implements
-  Iiiiiiiiii,
-  Jjjjjjjjjj,
-  Kkkkkkkkkk,
-  Llllllllll,
-  Mmmmmmmmmm,
-  Nnnnnnnnnn
+>(Hhhhhhhhhh Hhhhhhhhhh)
+  implements
+    Iiiiiiiiii,
+    Jjjjjjjjjj,
+    Kkkkkkkkkk,
+    Llllllllll,
+    Mmmmmmmmmm,
+    Nnnnnnnnnn
 {
   void a() {}
 }

@@ -1,4 +1,6 @@
-public class ExtendsAbstractClass extends AbstractClass {
+public class ExtendsAbstractClass
+  extends AbstractClass
+{
 
   @Override
   public void abstractMethod() {

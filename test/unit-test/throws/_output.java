@@ -1,10 +1,12 @@
 public abstract class Throws {
 
-  void throwException1() throws RuntimeException {
+  void throwException1()
+    throws RuntimeException {
     throw new RuntimeException();
   }
 
-  void throwException2(String string) throws RuntimeException {
+  void throwException2(String string)
+    throws RuntimeException {
     throw new RuntimeException();
   }
 
@@ -33,7 +35,8 @@ public abstract class Throws {
     String string2,
     String string3,
     String string4
-  ) throws RuntimeException {
+  )
+    throws RuntimeException {
     throw new RuntimeException();
   }
 
@@ -42,7 +45,8 @@ public abstract class Throws {
     String string2,
     String string3,
     String string4
-  ) throws RuntimeException, RuntimeException, RuntimeException {
+  )
+    throws RuntimeException, RuntimeException, RuntimeException {
     throw new RuntimeException();
   }
 
@@ -65,15 +69,18 @@ public abstract class Throws {
   void aVeryLongNameForAMethodWichShouldBreakTheExpression()
     throws Exception, Exception, Exception, Exception, Exception, Exception, Exception {}
 
-  abstract void absThrowException1() throws RuntimeException;
+  abstract void absThrowException1()
+    throws RuntimeException;
 
-  abstract void absThrowException2(String string) throws RuntimeException;
+  abstract void absThrowException2(String string)
+    throws RuntimeException;
 
   abstract void absThrowException3(
     String string1,
     String string2,
     String string3
-  ) throws RuntimeException;
+  )
+    throws RuntimeException;
 
   abstract void absThrowException4()
     throws RuntimeException, RuntimeException, RuntimeException;
@@ -85,14 +92,16 @@ public abstract class Throws {
     String string1,
     String string2,
     String string3
-  ) throws RuntimeException, RuntimeException, RuntimeException;
+  )
+    throws RuntimeException, RuntimeException, RuntimeException;
 
   abstract void absThrowException7(
     String string1,
     String string2,
     String string3,
     String string4
-  ) throws RuntimeException, RuntimeException, RuntimeException;
+  )
+    throws RuntimeException, RuntimeException, RuntimeException;
 
   abstract void absThrowException8(
     String string1,
@@ -102,7 +111,8 @@ public abstract class Throws {
   )
     throws RuntimeException, RuntimeException, RuntimeException, RuntimeException;
 
-  public Throws(String string1) throws RuntimeException {
+  public Throws(String string1)
+    throws RuntimeException {
     System.out.println("Constructor with throws that should not wrap");
   }
 
@@ -117,7 +127,8 @@ public abstract class Throws {
     String string3,
     String string4,
     String string5
-  ) throws RuntimeException {
+  )
+    throws RuntimeException {
     System.out.println("Constructor with throws that should wrap");
   }
 

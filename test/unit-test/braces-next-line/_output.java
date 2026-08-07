@@ -284,7 +284,8 @@ public interface NextLineInterface
   }
 }
 
-public interface ExtendedInterface extends NextLineInterface
+public interface ExtendedInterface
+  extends NextLineInterface
 {
   void extendedMethod();
 }
@@ -339,7 +340,8 @@ class SynchronizedExample
 
 class HelperMethods
 {
-  void riskyOperation() throws Exception
+  void riskyOperation()
+    throws Exception
   {
   }
 
