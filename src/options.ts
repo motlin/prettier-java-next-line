@@ -1,4 +1,4 @@
-import type { SupportOptions } from "maculate";
+import type { SupportOptions } from "prettier";
 
 export default {
   arrowParens: {
@@ -35,7 +35,7 @@ export default {
   braceStyle: {
     type: "choice",
     category: "Java",
-    default: "same-line",
+    default: "next-line",
     choices: [
       {
         value: "same-line",

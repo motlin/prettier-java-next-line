@@ -1,5 +1,5 @@
-import { util, type AstPath, type Doc } from "maculate";
-import { builders, utils } from "maculate/doc";
+import { util, type AstPath, type Doc } from "prettier";
+import { builders, utils } from "prettier/doc";
 import { printComments, printCommentsSeparately } from "../comments.ts";
 import {
   SyntaxType,

@@ -1,4 +1,4 @@
-import type { AstPath, Printer } from "maculate";
+import type { AstPath, Printer } from "prettier";
 import {
   canAttachComment,
   handleLineComment,

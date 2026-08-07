@@ -1,4 +1,4 @@
-import type { Plugin } from "maculate";
+import type { Plugin } from "prettier";
 import type { SyntaxNode } from "./node-types.ts";
 import options from "./options.ts";
 import parser from "./parser.ts";
