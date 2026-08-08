@@ -8,6 +8,10 @@
 /.idea
 /.vscode
 
+# Agent tooling
+/.llm
+/.claude
+
 # Tests
 /samples
 /test-samples/**/*
