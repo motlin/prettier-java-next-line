@@ -3,7 +3,10 @@
   "version": "2.10.3",
   "description": "Prettier Java plugin with configurable same-line and next-line braces",
   "homepage": "https://github.com/motlin/prettier-java-next-line",
-  "repository": "https://github.com/motlin/prettier-java-next-line",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/motlin/prettier-java-next-line.git"
+  },
   "license": "Apache-2.0",
   "type": "module",
   "exports": {
