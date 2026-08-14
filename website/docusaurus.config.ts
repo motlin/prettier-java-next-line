@@ -1,9 +1,10 @@
 import type { Options, ThemeConfig } from "@docusaurus/preset-classic";
 import type { Config } from "@docusaurus/types";
 import { themes } from "prism-react-renderer";
-import { homepage, repository } from "../package.json";
+import { homepage, repository as repositoryMetadata } from "../package.json";
 
 const { origin: url, pathname: baseUrl } = new URL(homepage);
+const { url: repository } = repositoryMetadata;
 const [, organizationName, projectName] = new URL(repository).pathname.split(
   "/"
 );
