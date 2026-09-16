@@ -47,3 +47,7 @@ clean:
 # yarn update-test-outputs
 update-test-outputs:
     yarn update-test-outputs
+
+# Publish the current version and push its annotated release tag
+release:
+    bash scripts/release.sh

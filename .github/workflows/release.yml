@@ -81,6 +81,7 @@ jobs:
           RELEASE_PREID: ${{ github.event.inputs.preid }}
 
       - name: 📢 Publish to npm
+        if: github.event_name == 'workflow_dispatch'
         run: |
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
           yarn lerna:publish
