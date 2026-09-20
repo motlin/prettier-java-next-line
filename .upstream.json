@@ -1,6 +1,6 @@
 {
   "repository": "jhipster/prettier-java",
   "branch": "main",
-  "commit": "47bf4799732464cb3a6e4c6195772345f781a485",
-  "release": "prettier-plugin-java@2.10.3"
+  "commit": "4f55fcfb13b386651b9bd2b266dab2433f2272b1",
+  "release": "prettier-plugin-java@2.10.4"
 }

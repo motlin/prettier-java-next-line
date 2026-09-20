@@ -140,6 +140,13 @@ export function hasLeadingComments(node: SyntaxNode) {
   return node.comments?.some(({ leading }) => leading) ?? false;
 }
 
+export function hasDanglingComments(node: SyntaxNode) {
+  return (
+    node.comments?.some(({ leading, trailing }) => !leading && !trailing) ??
+    false
+  );
+}
+
 export function indentInParentheses(contents: Doc) {
   return (contents && !Array.isArray(contents)) || contents.length
     ? ["(", indent([softline, contents]), softline, ")"]
@@ -442,7 +449,8 @@ export function printAssignment(
     (rightNode.type === SyntaxType.TernaryExpression &&
       (rightNode.conditionNode.type === SyntaxType.BinaryExpression ||
         rightNode.conditionNode.type === SyntaxType.InstanceofExpression)) ||
-    hasLeadingComments(rightNode);
+    (isMember(rightNode) && hasDanglingComments(rightNode)) ||
+    (!isMember(rightNode) && hasLeadingComments(rightNode));
 
   if (breakAfterOperator) {
     // First break after operator, then right-hand side
@@ -860,7 +868,7 @@ function findBaseIndent(lines: string[]) {
 }
 
 function findEmbeddedLanguage(path: NamedNodePath) {
-  return path.ancestors
+  return [path.node, ...path.ancestors]
     .find(
       ({ type, comments }) =>
         type === SyntaxType.Block || comments?.some(({ leading }) => leading)
