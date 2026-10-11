@@ -1,6 +1,6 @@
 {
   "name": "prettier-java-next-line",
-  "version": "2.10.4",
+  "version": "2.11.0",
   "description": "Prettier Java plugin with configurable same-line and next-line braces",
   "homepage": "https://github.com/motlin/prettier-java-next-line",
   "repository": {
@@ -77,7 +77,7 @@
     "postcss": "^8.5.15",
     "prettier": "^3.8.1",
     "prettier-plugin-css-order": "^2.2.0",
-    "tree-sitter-java-orchard": "0.5.18",
+    "tree-sitter-java-orchard": "0.5.22",
     "tsdown": "^0.23.0",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.57.1"
