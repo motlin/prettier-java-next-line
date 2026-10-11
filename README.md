@@ -35,6 +35,15 @@ Set `braceStyle` only when a project needs the inherited same-line style:
 }
 ```
 
+Set `importOrder` to group imports the way Spotless's `importOrder` step does. Groups separated by `,` get blank lines between them, prefixes joined by `|` share a group, `#` marks a static prefix, and an empty prefix catches everything else. Each import belongs to its longest matching prefix. Module imports (`import module`) always come first in their own group. When `importOrder` is empty, static imports follow them, then all others.
+
+```json
+{
+	"plugins": ["prettier-java-next-line"],
+	"importOrder": "java,javax,,#java|#javax,#"
+}
+```
+
 To use the matching Prettier runtime fork too, install it under the name `prettier` with an npm alias:
 
 ```bash

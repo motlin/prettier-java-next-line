@@ -13,7 +13,7 @@ import {
 const { group, hardline, indent, join, line } = builders;
 
 export default {
-  program(path, print) {
+  program(path, print, options) {
     if (!path.node.namedChildren.length) {
       return [printDanglingComments(path), hardline];
     }
@@ -24,9 +24,8 @@ export default {
       parts.push(path.call(print, "namedChildren", 0));
     }
 
-    const moduleImports: { doc: Doc; names: string[] }[] = [];
-    const staticImports: { doc: Doc; names: string[] }[] = [];
-    const imports: { doc: Doc; names: string[] }[] = [];
+    const moduleImports: ImportEntry[] = [];
+    const imports: ImportEntry[] = [];
     const otherDeclarations: Doc[] = [];
 
     path.each(child => {
@@ -46,24 +45,26 @@ export default {
           names.push("*");
         }
         const modifier = child.node.children[1].type;
-        (modifier === "module"
-          ? moduleImports
-          : modifier === "static"
-            ? staticImports
-            : imports
-        ).push({ doc, names });
+        (modifier === "module" ? moduleImports : imports).push({
+          doc,
+          names,
+          isStatic: modifier === "static"
+        });
       } else if (!child.isFirst) {
         otherDeclarations.push(doc);
       }
     }, "namedChildren");
 
     parts.push(
-      ...[moduleImports, staticImports, imports]
-        .filter(imports => imports.length)
-        .map(imports =>
+      ...[
+        moduleImports.sort(compareFqn),
+        ...groupImports(imports, options.importOrder as string)
+      ]
+        .filter(group => group.length)
+        .map(group =>
           join(
             hardline,
-            imports.sort(compareFqn).map(({ doc }) => doc)
+            group.map(({ doc }) => doc)
           )
         ),
       ...otherDeclarations
@@ -198,6 +199,90 @@ function extractNames(
   return node.type === SyntaxType.Identifier
     ? [node.value]
     : [...extractNames(node.scopeNode), node.nameNode.value];
+}
+
+type ImportEntry = { doc: Doc; names: string[]; isStatic: boolean };
+
+const STATIC_PREFIX = "static ";
+const CATCH_ALL_PREFIX = "";
+
+function groupImports(imports: ImportEntry[], importOrder: string) {
+  if (!importOrder) {
+    return [
+      imports.filter(({ isStatic }) => isStatic),
+      imports.filter(({ isStatic }) => !isStatic)
+    ]
+      .filter(group => group.length)
+      .map(group => group.sort(compareFqn));
+  }
+
+  const groups = parseImportOrder(importOrder);
+  const prefixes = groups.flat();
+  const importsByPrefix = new Map<
+    string,
+    { key: string; entry: ImportEntry }[]
+  >();
+  for (const entry of imports) {
+    const key = importKey(entry);
+    const prefix = prefixes
+      .filter(candidate => key.startsWith(candidate))
+      .reduce((best, candidate) =>
+        candidate.length > best.length ? candidate : best
+      );
+    importsByPrefix.set(prefix, [
+      ...(importsByPrefix.get(prefix) ?? []),
+      { key, entry }
+    ]);
+  }
+
+  return groups
+    .map(group =>
+      group.flatMap(prefix =>
+        (importsByPrefix.get(prefix) ?? [])
+          .sort((a, b) => (a.key < b.key ? -1 : a.key > b.key ? 1 : 0))
+          .map(({ entry }) => entry)
+      )
+    )
+    .filter(group => group.length);
+}
+
+/**
+ * Parses an import order in Spotless's format: groups separated by `,` are
+ * printed with blank lines between them, prefixes joined by `|` share a group,
+ * `#` marks a static prefix, and an empty prefix catches everything else.
+ * Each import belongs to its longest matching prefix.
+ */
+function parseImportOrder(importOrder: string) {
+  const knownPrefixes = new Set<string>();
+  const groups = importOrder.split(",").map(group =>
+    group
+      .split("|")
+      .map(prefix =>
+        prefix.startsWith("#") ? STATIC_PREFIX + prefix.slice(1) : prefix
+      )
+      .filter(prefix => {
+        if (knownPrefixes.has(prefix)) {
+          return false;
+        }
+        knownPrefixes.add(prefix);
+        return true;
+      })
+  );
+
+  if (!knownPrefixes.has(STATIC_PREFIX)) {
+    const lastStaticGroupIndex = groups.findLastIndex(group =>
+      group.some(prefix => prefix.startsWith(STATIC_PREFIX))
+    );
+    groups.splice(Math.max(lastStaticGroupIndex, 0), 0, [STATIC_PREFIX]);
+  }
+  if (!knownPrefixes.has(CATCH_ALL_PREFIX)) {
+    groups.push([CATCH_ALL_PREFIX]);
+  }
+  return groups;
+}
+
+function importKey({ names, isStatic }: ImportEntry) {
+  return (isStatic ? STATIC_PREFIX : "") + names.join(".");
 }
 
 function compareFqn(

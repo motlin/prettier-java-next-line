@@ -47,5 +47,12 @@ export default {
       }
     ],
     description: "Placement of opening braces."
+  },
+  importOrder: {
+    type: "string",
+    category: "Java",
+    default: "",
+    description:
+      "Import groups in Spotless's format, such as `java,javax,,#java|#javax,#`. Module imports always come first. Empty puts static imports next, then all others."
   }
 } satisfies SupportOptions;
