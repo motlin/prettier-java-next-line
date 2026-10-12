@@ -39,6 +39,7 @@
     "lerna:version": "lerna version --exact --no-private",
     "lint": "eslint src test",
     "prepare": "husky",
+    "prepublishOnly": "npm run build",
     "test": "yarn run test:unit && yarn run test:e2e-core",
     "test:all": "yarn run test && yarn run test:e2e-jhipster1 && yarn run test:e2e-jhipster2",
     "test:e2e-core": "node scripts/clone-samples e2e-core && mocha \"test/repository-test/core-test.ts\"",
