@@ -507,3 +507,26 @@ class EmptyBlocksTest
     };
   }
 }
+
+class BareBlocks
+{
+  void method()
+  {
+    int x = 1;
+    {
+      int y = 2;
+    }
+    // comment before a bare block
+    {
+      int z = 3;
+    }
+  }
+
+  BareBlocks()
+  {
+    // comment before a bare block
+    {
+      int y = 2;
+    }
+  }
+}

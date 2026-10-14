@@ -272,7 +272,15 @@ function printBlockNextLine(path: NamedNodePath, contents: Doc[]) {
       SyntaxType.EnumBody,
       SyntaxType.InterfaceBody
     ].includes(parentType);
-  const prefix = isChildOfBodyDeclaration ? [] : [hardline];
+  // A bare block used as a statement already starts on its own line.
+  const isBlockStatement =
+    parentType != null &&
+    [
+      SyntaxType.Block,
+      SyntaxType.ConstructorBody,
+      SyntaxType.SwitchBlockStatementGroup
+    ].includes(parentType);
+  const prefix = isChildOfBodyDeclaration || isBlockStatement ? [] : [hardline];
 
   if (contents.length) {
     return [
