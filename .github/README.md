@@ -34,7 +34,6 @@ This directory contains GitHub-specific configuration for the Prettier Java Next
 - Uses branch-specific dist-tags (dev, next, beta, alpha)
 
 ### PR Validation (pr-validation.yml)
-- Validates PR title follows conventional commits format
 - Auto-labels PRs based on changed files
 
 ## 🔑 Required Secrets
