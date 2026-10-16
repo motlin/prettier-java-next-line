@@ -48,6 +48,22 @@ export default {
     ],
     description: "Placement of opening braces."
   },
+  arrayInitializerLayout: {
+    type: "choice",
+    category: "Java",
+    default: "always-break",
+    choices: [
+      {
+        value: "always-break",
+        description: "Put each array element on its own line"
+      },
+      {
+        value: "fit",
+        description: "Keep array initializers on one line when they fit"
+      }
+    ],
+    description: "Layout of array initializers when braceStyle is next-line."
+  },
   importOrder: {
     type: "string",
     category: "Java",

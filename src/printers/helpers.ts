@@ -188,6 +188,11 @@ export function printArrayInitializer(
     options.braceStyle === "next-line" &&
     path.node.type === SyntaxType.ArrayInitializer
   ) {
+    if (options.arrayInitializerLayout === "fit") {
+      const bracketLine = options.bracketSpacing ? line : softline;
+      const block = ["{", indent([bracketLine, ...list]), bracketLine, "}"];
+      return group(isNestedArray(path) ? block : [softline, ...block]);
+    }
     const block = ["{", indent([line, ...list]), line, "}"];
     return isNestedArray(path) ? block : [hardline, ...block];
   }
