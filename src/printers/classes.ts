@@ -335,7 +335,7 @@ export default {
     return join(separator, parts);
   },
 
-  enum_declaration(path, print) {
+  enum_declaration(path, print, options) {
     const modifiers = printModifiers(path, print, "declarationOnly");
     const parts = ["enum ", path.call(print, "nameNode")];
 
@@ -343,7 +343,7 @@ export default {
       const hasBody = path.node.bodyNode.namedChildren.length > 0;
       parts.push(
         indent([hardline, path.call(print, "interfacesNode")]),
-        hasBody ? line : " "
+        options?.braceStyle === "next-line" ? "" : hasBody ? line : " "
       );
     } else {
       parts.push(" ");

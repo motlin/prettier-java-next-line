@@ -227,7 +227,10 @@ export default {
           ? path.call(print, "initNodes", 0)
           : [printExpressionList(path.map(print, "initNodes")), ";"],
       hasCondition ? [path.call(print, "conditionNode"), ";"] : ";",
-      hasUpdate ? printExpressionList(path.map(print, "updateNodes")) : ""
+      // An empty update keeps its space on one line but adds no line when the header wraps.
+      hasUpdate
+        ? [line, printExpressionList(path.map(print, "updateNodes"))]
+        : ifBreak("", " ")
     ];
 
     const hasEmptyStatement = path.node.bodyNode.type === ";";
@@ -235,7 +238,12 @@ export default {
       danglingComments && [danglingComments, hardline],
       "for ",
       hasInit || hasCondition || hasUpdate
-        ? group(indentInParentheses(join(line, expressions), options))
+        ? group(
+            indentInParentheses(
+              [join(line, expressions.slice(0, 2)), expressions[2]],
+              options
+            )
+          )
         : "(;;)",
       hasEmptyStatement ? ";" : [" ", path.call(print, "bodyNode")]
     ];
