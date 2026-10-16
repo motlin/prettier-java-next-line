@@ -8,4 +8,7 @@ describe("prettier-java", () => {
   testSampleWithOptions({
     testFolder: path.resolve(__dirname, "./emptyForUpdateAndEnumInterfaces")
   });
+  testSampleWithOptions({
+    testFolder: path.resolve(__dirname, "./typeParametersBeforeClauses")
+  });
 });

@@ -29,7 +29,11 @@ export default {
     if (hasTypeParameters) {
       const typeParameters = path.call(print, "type_parametersNode");
       parts.push(
-        hasMultipleClauses ? group(indent(typeParameters)) : typeParameters
+        hasMultipleClauses
+          ? group(indent(typeParameters))
+          : options?.braceStyle === "next-line"
+            ? group(typeParameters)
+            : typeParameters
       );
     }
 
