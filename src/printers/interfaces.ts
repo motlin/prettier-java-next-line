@@ -129,13 +129,13 @@ export default {
     return ["@", path.call(print, "nameNode")];
   },
 
-  annotation_argument_list(path, print) {
+  annotation_argument_list(path, print, options) {
     const args = path.map(print, "namedChildren");
     return args.length === 1 &&
       path.node.namedChildren[0].type ===
         SyntaxType.ElementValueArrayInitializer
       ? ["(", args[0], ")"]
-      : group(indentInParentheses(join([",", line], args)));
+      : group(indentInParentheses(join([",", line], args), options));
   },
 
   element_value_pair(path, print) {

@@ -154,9 +154,19 @@ export function hasDanglingComments(node: SyntaxNode) {
   );
 }
 
-export function indentInParentheses(contents: Doc) {
+export function closingBracketLine(
+  options?: JavaParserOptions,
+  lineDoc: Doc = softline
+) {
+  return options?.closingBracket === "same-line" ? "" : lineDoc;
+}
+
+export function indentInParentheses(
+  contents: Doc,
+  options?: JavaParserOptions
+) {
   return (contents && !Array.isArray(contents)) || contents.length
-    ? ["(", indent([softline, contents]), softline, ")"]
+    ? ["(", indent([softline, contents]), closingBracketLine(options), ")"]
     : "()";
 }
 
@@ -392,7 +402,8 @@ export function printBodyDeclarations(
 
 export function printTypeParameters(
   path: NamedNodePath<SyntaxType.TypeArguments | SyntaxType.TypeParameters>,
-  print: PrintFunction
+  print: PrintFunction,
+  options?: JavaParserOptions
 ) {
   const parameters = path.node.namedChildren;
 
@@ -413,7 +424,7 @@ export function printTypeParameters(
   const parts = [
     "<",
     indent([softline, join([",", line], path.map(print, "namedChildren"))]),
-    softline,
+    closingBracketLine(options),
     ">"
   ];
 

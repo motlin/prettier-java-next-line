@@ -44,6 +44,15 @@ With next-line braces, array initializers put every element on its own line by d
 }
 ```
 
+Set `closingBracket` to `same-line` to keep the closing `)` or `>` of a wrapped list on its last line instead of on its own line. This matches Checkstyle's `SeparatorWrap` check on `RPAREN` with the `eol` option:
+
+```json
+{
+	"plugins": ["prettier-java-next-line"],
+	"closingBracket": "same-line"
+}
+```
+
 Set `importOrder` to group imports the way Spotless's `importOrder` step does. Groups separated by `,` get blank lines between them, prefixes joined by `|` share a group, `#` marks a static prefix, and an empty prefix catches everything else. Each import belongs to its longest matching prefix. Module imports (`import module`) always come first in their own group. When `importOrder` is empty, static imports follow them, then all others.
 
 ```json

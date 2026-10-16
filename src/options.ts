@@ -64,6 +64,25 @@ export default {
     ],
     description: "Layout of array initializers when braceStyle is next-line."
   },
+  closingBracket: {
+    type: "choice",
+    category: "Java",
+    default: "next-line",
+    choices: [
+      {
+        value: "next-line",
+        description:
+          "Put the closing parenthesis or angle bracket of a wrapped list on its own line"
+      },
+      {
+        value: "same-line",
+        description:
+          "Keep the closing parenthesis or angle bracket on the last line of a wrapped list"
+      }
+    ],
+    description:
+      "Placement of the closing parenthesis or angle bracket when a list wraps."
+  },
   importOrder: {
     type: "string",
     category: "Java",

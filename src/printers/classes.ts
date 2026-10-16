@@ -175,7 +175,7 @@ export default {
     );
   },
 
-  formal_parameters(path, print) {
+  formal_parameters(path, print, options) {
     const parameters =
       (path.parent as NamedNode | null)?.type === SyntaxType.RecordDeclaration
         ? printBodyDeclarations(path, print)
@@ -185,7 +185,7 @@ export default {
       return ["(", printDanglingCommentsInList(path), ")"];
     }
 
-    return indentInParentheses(join([",", line], parameters));
+    return indentInParentheses(join([",", line], parameters), options);
   },
 
   formal_parameter(path, print) {

@@ -10,6 +10,7 @@ import {
   hasChild,
   hasDanglingComments,
   hasType,
+  closingBracketLine,
   indentInParentheses,
   isReturnOrThrowStatement,
   printAssignment,
@@ -95,7 +96,7 @@ export default {
       signatureDocs
     });
 
-    bodyDoc = printArrowFunctionBody(path, args, {
+    bodyDoc = printArrowFunctionBody(path, args, options, {
       bodyDoc: bodyDoc!,
       bodyComments,
       shouldPutBodyOnSameLine
@@ -124,7 +125,7 @@ export default {
 
     const parameters = join([",", line], identifiers);
     if (identifiers.length > 1 || willBreak(identifiers)) {
-      return group(indentInParentheses(parameters));
+      return group(indentInParentheses(parameters, options));
     }
     return options.arrowParens === "avoid"
       ? parameters
@@ -224,11 +225,11 @@ export default {
     const result = maybeGroup([
       printTernaryTest(path, print),
       forceNoIndent ? parts : indent(parts),
-      breakClosingParen && !shouldExtraIndent ? softline : ""
+      breakClosingParen && !shouldExtraIndent ? closingBracketLine(options) : ""
     ]);
 
     return isParentTest || shouldExtraIndent
-      ? group([indent([softline, result]), softline])
+      ? group([indent([softline, result]), closingBracketLine(options)])
       : result;
   },
 
@@ -293,7 +294,7 @@ export default {
       parent?.type === SyntaxType.MethodReference ||
       parent?.type === SyntaxType.ObjectCreationExpression
     ) {
-      return group([indent([softline, ...parts]), softline]);
+      return group([indent([softline, ...parts]), closingBracketLine(options)]);
     }
 
     // Avoid indenting sub-expressions in some cases where the first sub-expression is already
@@ -369,13 +370,13 @@ export default {
     );
   },
 
-  unary_expression(path, print) {
+  unary_expression(path, print, options) {
     const parts = [path.call(print, "operatorNode")];
 
     const operandDoc = path.call(print, "operandNode");
 
     if (path.node.operandNode.comments) {
-      parts.push(group(indentInParentheses(operandDoc)));
+      parts.push(group(indentInParentheses(operandDoc, options)));
     } else {
       parts.push(operandDoc);
     }
@@ -400,7 +401,7 @@ export default {
     ];
   },
 
-  parenthesized_expression(path, print) {
+  parenthesized_expression(path, print, options) {
     const expression = path.call(print, "namedChildren", 0);
     const parentType = (path.parent as NamedNode | null)?.type;
     const grandparentType = (path.grandparent as NamedNode | null)?.type;
@@ -424,7 +425,10 @@ export default {
           grandparentType === SyntaxType.VariableDeclarator));
     if (!hasLambda && hasSuffix && (!hasTernary || isAssignment)) {
       return group(
-        indentInParentheses(hasTernary ? group(expression) : expression)
+        indentInParentheses(
+          hasTernary ? group(expression) : expression,
+          options
+        )
       );
     } else if (
       parentType &&
@@ -440,9 +444,9 @@ export default {
         (path.node.fieldName !== "body" &&
           parentType === SyntaxType.SynchronizedStatement))
     ) {
-      return group(indentInParentheses(group(expression)));
+      return group(indentInParentheses(group(expression), options));
     } else if (hasTernary && hasSuffix && !isAssignment) {
-      return group(["(", expression, softline, ")"]);
+      return group(["(", expression, closingBracketLine(options), ")"]);
     } else {
       return group([
         "(",
@@ -520,7 +524,7 @@ export default {
         ({ type, leading, trailing }) =>
           !leading && !trailing && type === SyntaxType.LineComment
       );
-      return group(indentInParentheses(printDanglingComments(path)), {
+      return group(indentInParentheses(printDanglingComments(path), options), {
         shouldBreak
       });
     }
@@ -545,9 +549,15 @@ export default {
     }, "namedChildren");
 
     function allArgsBrokenOut() {
-      return group(["(", indent([line, ...printedArguments]), line, ")"], {
-        shouldBreak: true
-      });
+      return group(
+        [
+          "(",
+          indent([line, ...printedArguments]),
+          closingBracketLine(options, line),
+          ")"
+        ],
+        { shouldBreak: true }
+      );
     }
 
     if (anyArgEmptyLine) {
@@ -635,7 +645,7 @@ export default {
       ]);
     }
 
-    return group(indentInParentheses(printedArguments), {
+    return group(indentInParentheses(printedArguments, options), {
       shouldBreak: printedArguments.some(willBreak) || anyArgEmptyLine
     });
   },
@@ -705,9 +715,12 @@ export default {
     return path.map(print, "children");
   },
 
-  record_pattern_body(path, print) {
+  record_pattern_body(path, print, options) {
     return group(
-      indentInParentheses(join([",", line], path.map(print, "namedChildren")))
+      indentInParentheses(
+        join([",", line], path.map(print, "namedChildren")),
+        options
+      )
     );
   },
 
@@ -822,6 +835,7 @@ function printArrowFunctionSignatures(
 function printArrowFunctionBody(
   path: NamedNodePath,
   args: unknown,
+  options: JavaParserOptions,
   {
     bodyDoc,
     bodyComments,
@@ -841,7 +855,7 @@ function printArrowFunctionBody(
     "expandLastArg" in args &&
     args.expandLastArg &&
     !path.node.comments
-      ? softline
+      ? closingBracketLine(options)
       : "";
 
   return shouldPutBodyOnSameLine

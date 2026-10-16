@@ -1,0 +1,7 @@
+{
+    "braceStyle": "next-line",
+    "tabWidth": 4,
+    "printWidth": 60,
+    "experimentalOperatorPosition": "start",
+    "closingBracket": "same-line"
+}

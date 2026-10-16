@@ -6,6 +6,7 @@ import {
   type ThrowStatementNode
 } from "../node-types.ts";
 import {
+  closingBracketLine,
   hasChild,
   hasLeadingComments,
   indentInParentheses,
@@ -15,6 +16,7 @@ import {
   printModifiers,
   printVariableDeclaration,
   returnArgumentHasLeadingComment,
+  type JavaParserOptions,
   type NamedNodePath,
   type NamedNodePrinters,
   type PrintFunction
@@ -213,7 +215,7 @@ export default {
     return ["do", body, whilePrefix, path.call(print, "conditionNode"), ";"];
   },
 
-  for_statement(path, print) {
+  for_statement(path, print, options) {
     const danglingComments = printDanglingComments(path);
     const hasInit = path.node.initNodes.length > 0;
     const hasCondition = hasChild(path, "conditionNode");
@@ -233,7 +235,7 @@ export default {
       danglingComments && [danglingComments, hardline],
       "for ",
       hasInit || hasCondition || hasUpdate
-        ? group(indentInParentheses(join(line, expressions)))
+        ? group(indentInParentheses(join(line, expressions), options))
         : "(;;)",
       hasEmptyStatement ? ";" : [" ", path.call(print, "bodyNode")]
     ];
@@ -337,7 +339,8 @@ export default {
     );
     const params = group(
       indentInParentheses(
-        path.call(print, "namedChildren", catchFormalParameterIndex)
+        path.call(print, "namedChildren", catchFormalParameterIndex),
+        options
       )
     );
     const body = path.call(print, "bodyNode");
@@ -396,7 +399,7 @@ export default {
     return join(" ", ["try", resources, body, ...clauses]);
   },
 
-  resource_specification(path, print) {
+  resource_specification(path, print, options) {
     const resources: Doc[] = [];
     let hasTrailingSemicolon = false;
 
@@ -414,7 +417,7 @@ export default {
     if (hasTrailingSemicolon) {
       parts.push(ifBreak(";"));
     }
-    return group(indentInParentheses(parts));
+    return group(indentInParentheses(parts, options));
   },
 
   resource(path, print) {
@@ -474,19 +477,28 @@ function printExpressionList(expressions: Doc[]) {
   );
 }
 
-function printReturnOrThrowArgument(path: NamedNodePath, print: PrintFunction) {
+function printReturnOrThrowArgument(
+  path: NamedNodePath,
+  print: PrintFunction,
+  options: JavaParserOptions
+) {
   const { node } = path;
   const argumentDoc = print(path);
 
   if (returnArgumentHasLeadingComment(node)) {
-    return ["(", indent([hardline, argumentDoc]), hardline, ")"];
+    return [
+      "(",
+      indent([hardline, argumentDoc]),
+      closingBracketLine(options, hardline),
+      ")"
+    ];
   }
 
   if (node.type === SyntaxType.BinaryExpression) {
     return group([
       ifBreak("("),
       indent([softline, argumentDoc]),
-      softline,
+      closingBracketLine(options),
       ifBreak(")")
     ]);
   }
@@ -496,7 +508,8 @@ function printReturnOrThrowArgument(path: NamedNodePath, print: PrintFunction) {
 
 function printReturnOrThrowStatement(
   path: AstPath<ReturnStatementNode | ThrowStatementNode>,
-  print: PrintFunction
+  print: PrintFunction,
+  options: JavaParserOptions
 ) {
   const { node } = path;
   return [
@@ -505,7 +518,7 @@ function printReturnOrThrowStatement(
       ? [
           " ",
           path.call(
-            () => printReturnOrThrowArgument(path, print),
+            () => printReturnOrThrowArgument(path, print, options),
             "namedChildren",
             0
           )
