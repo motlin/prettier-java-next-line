@@ -1,8 +1,11 @@
-# Unreleased (prettier-java-next-line)
+# prettier-java-next-line 2.11.2
 
 ## What's Changed
 * Indent text block contents and the closing `"""` one level deeper than the line that opens the block, for plain and embedded-language text blocks. This reverts upstream's flush text block indentation (jhipster/prettier-java 9f2687d). Text blocks in ternary branches keep content one level past the `? """` line.
 * Ternary expressions now follow `experimentalOperatorPosition`. With `"end"`, which is the default, a wrapped ternary prints `?` and `:` at the end of the line (`condition ?` / `whenTrue :` / `whenFalse`), and nested ternaries indent one level per level of nesting. Set `experimentalOperatorPosition: "start"` to keep `?` and `:` at the start of the line.
+* Merge unreleased upstream prettier-java changes after 2.11.0: concise numeric array initializers, improved `throws` breaking, method references on array and generic types as simple call arguments, and printing all comments on ignored member chains.
+  * With `braceStyle: "next-line"`, `arrayInitializerLayout: "always-break"` still puts each element on its own line, including numeric arrays and nested rows. `"fit"` keeps a matrix on one line when it fits.
+  * Method and constructor declarations keep the fork's `throws` clause on its own line. A long exception list now wraps one exception per line.
 
 # Latest v2.11.0
 
