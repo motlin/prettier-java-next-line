@@ -59,7 +59,7 @@ describe("VariableDeclarator", () => {
 
     const formattedText = await formatJavaSnippet({ snippet });
     const expectedContents =
-      "int value = thisIsAnotherVeryLongIntegerThatIsEvenLongerThanFirstOne\n  ? thisIsAnotherVeryLongIntegerThatIsEvenLongerThanFirstOne\n  : thisIsAShortInteger;\n";
+      "int value = thisIsAnotherVeryLongIntegerThatIsEvenLongerThanFirstOne ?\n  thisIsAnotherVeryLongIntegerThatIsEvenLongerThanFirstOne :\n  thisIsAShortInteger;\n";
     expect(formattedText).to.equal(expectedContents);
   });
   it("should format comment on its own line between equal and variable initializer", async () => {

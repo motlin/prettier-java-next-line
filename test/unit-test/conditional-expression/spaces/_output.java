@@ -2,21 +2,21 @@ class ConditionalExpression {
 
     int ternaryOperationThatShouldBreak() {
         int shortInteger =
-            thisIsAnotherVeryLongIntegerThatIsEvenLongerThanFirstOne
-                ? thisIsAnotherVeryLongIntegerThatIsEvenLongerThanFirstOne
-                : thisIsAShortInteger;
-        return thisIsAnotherVeryLongIntegerThatIsEvenLongerThanFirstOne
-            ? thisIsAnotherVeryLongIntegerThatIsEvenLongerThanFirstOne
-            : thisIsAShortInteger;
+            thisIsAnotherVeryLongIntegerThatIsEvenLongerThanFirstOne ?
+                thisIsAnotherVeryLongIntegerThatIsEvenLongerThanFirstOne :
+                thisIsAShortInteger;
+        return thisIsAnotherVeryLongIntegerThatIsEvenLongerThanFirstOne ?
+            thisIsAnotherVeryLongIntegerThatIsEvenLongerThanFirstOne :
+            thisIsAShortInteger;
     }
 
     int ternaryOperationThatShouldBreak2() {
-        int shortInteger = thisIsAVeryLongInteger
-            ? thisIsAnotherVeryLongOne
-            : thisIsAnotherVeryLongIntegerThatIsEvenLongerThanFirstOne;
-        return thisIsAVeryLongInteger
-            ? thisIsAnotherVeryLongOne
-            : thisIsAnotherVeryLongIntegerThatIsEvenLongerThanFirstOne;
+        int shortInteger = thisIsAVeryLongInteger ?
+            thisIsAnotherVeryLongOne :
+            thisIsAnotherVeryLongIntegerThatIsEvenLongerThanFirstOne;
+        return thisIsAVeryLongInteger ?
+            thisIsAnotherVeryLongOne :
+            thisIsAnotherVeryLongIntegerThatIsEvenLongerThanFirstOne;
     }
 
     void ternaryOperationThatShouldBreak3() {
@@ -25,45 +25,45 @@ class ConditionalExpression {
         cccccccccc &&
         dddddddddd &&
         eeeeeeeeee &&
-        ffffffffff
-            ? gggggggggg
-            : hhhhhhhhhh;
+        ffffffffff ?
+            gggggggggg :
+            hhhhhhhhhh;
         var v =
             aaaaaaaaaa &&
             bbbbbbbbbb &&
             cccccccccc &&
             dddddddddd &&
             eeeeeeeeee &&
-            ffffffffff
-                ? gggggggggg
-                : hhhhhhhhhh;
+            ffffffffff ?
+                gggggggggg :
+                hhhhhhhhhh;
         v =
             aaaaaaaaaa &&
             bbbbbbbbbb &&
             cccccccccc &&
             dddddddddd &&
             eeeeeeeeee &&
-            ffffffffff
-                ? gggggggggg
-                : hhhhhhhhhh;
+            ffffffffff ?
+                gggggggggg :
+                hhhhhhhhhh;
         f(
             aaaaaaaaaa &&
                 bbbbbbbbbb &&
                 cccccccccc &&
                 dddddddddd &&
                 eeeeeeeeee &&
-                ffffffffff
-                ? gggggggggg
-                : hhhhhhhhhh
+                ffffffffff ?
+                gggggggggg :
+                hhhhhhhhhh
         );
         return aaaaaaaaaa &&
             bbbbbbbbbb &&
             cccccccccc &&
             dddddddddd &&
             eeeeeeeeee &&
-            ffffffffff
-            ? gggggggggg
-            : hhhhhhhhhh;
+            ffffffffff ?
+            gggggggggg :
+            hhhhhhhhhh;
     }
 
     int ternaryOperationThatShouldNotBreak() {
@@ -72,80 +72,80 @@ class ConditionalExpression {
     }
 
     void nestedTernary() {
-        aaaaaaaaaa
-            ? bbbbbbbbbb
-            : cccccccccc
-              ? dddddddddd
-              : eeeeeeeeee
-                ? ffffffffff
-                : gggggggggg;
+        aaaaaaaaaa ?
+            bbbbbbbbbb :
+            cccccccccc ?
+                dddddddddd :
+                eeeeeeeeee ?
+                    ffffffffff :
+                    gggggggggg;
     }
 
     void ternaryWithComments() {
-        a
-            ? // b
-              b
-            : // c
-              c;
-        a
-            ? // b
-              b
-            : // c
-              c;
-        a // b
-            ? b
-            : // c
-              c;
-        a
-            ? b // b
-            : c; // c
+        a ?
+            // b
+            b :
+            // c
+            c;
+        a ?
+            // b
+            b :
+            // c
+            c;
+        a ? // b
+            b :
+            // c
+            c;
+        a ?
+            b : // b
+            c; // c
     }
 
     void ternaryInParentheses() {
-        aaaaaaaaaa
-            ? bbbbbbbbbb
-            : cccccccccc.dddddddddd().eeeeeeeeee().ffffffffff();
+        aaaaaaaaaa ?
+            bbbbbbbbbb :
+            cccccccccc.dddddddddd().eeeeeeeeee().ffffffffff();
     }
 
     void assignment() {
         Aaaaaaaaaa aaaaaaaaaa =
-            bbbbbbbbbb(cccccccccc, dddddddddd, eeeeeeeeee) != ffffffffff
-                ? gggggggggg
-                : hhhhhhhhhh;
+            bbbbbbbbbb(cccccccccc, dddddddddd, eeeeeeeeee) != ffffffffff ?
+                gggggggggg :
+                hhhhhhhhhh;
 
         Aaaaaaaaaa aaaaaaaaaa =
             bbbbbbbbbb(cccccccccccccccccccc, dddddddddd, eeeeeeeeee) !=
-            ffffffffff
-                ? gggggggggg
-                : hhhhhhhhhh;
+            ffffffffff ?
+                gggggggggg :
+                hhhhhhhhhh;
 
         Aaaaaaaaaa aaaaaaaaaa =
             bbbbbbbbbb(
                 cccccccccccccccccccc,
                 dddddddddddddddddddd,
                 eeeeeeeeee
-            ) != ffffffffff
-                ? gggggggggg
-                : hhhhhhhhhh;
+            ) != ffffffffff ?
+                gggggggggg :
+                hhhhhhhhhh;
 
         aaaaaaaaaa =
-            bbbbbbbbbb(cccccccccc, dddddddddd, eeeeeeeeee) != ffffffffff
-                ? gggggggggg
-                : hhhhhhhhhh;
+            bbbbbbbbbb(cccccccccc, dddddddddd, eeeeeeeeee) != ffffffffff ?
+                gggggggggg :
+                hhhhhhhhhh;
 
         aaaaaaaaaa =
             bbbbbbbbbb(cccccccccccccccccccc, dddddddddd, eeeeeeeeee) !=
-            ffffffffff
-                ? gggggggggg
-                : hhhhhhhhhh;
+            ffffffffff ?
+                gggggggggg :
+                hhhhhhhhhh;
 
         aaaaaaaaaa =
             bbbbbbbbbb(
                 cccccccccccccccccccc,
                 dddddddddddddddddddd,
                 eeeeeeeeee
-            ) != ffffffffff
-                ? gggggggggg
-                : hhhhhhhhhh;
+            ) != ffffffffff ?
+                gggggggggg :
+                hhhhhhhhhh;
     }
 }

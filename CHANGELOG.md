@@ -2,6 +2,7 @@
 
 ## What's Changed
 * Indent text block contents and the closing `"""` one level deeper than the line that opens the block, for plain and embedded-language text blocks. This reverts upstream's flush text block indentation (jhipster/prettier-java 9f2687d). Text blocks in ternary branches keep content one level past the `? """` line.
+* Ternary expressions now follow `experimentalOperatorPosition`. With `"end"`, which is the default, a wrapped ternary prints `?` and `:` at the end of the line (`condition ?` / `whenTrue :` / `whenFalse`), and nested ternaries indent one level per level of nesting. Set `experimentalOperatorPosition: "start"` to keep `?` and `:` at the start of the line.
 
 # Latest v2.11.0
 

@@ -134,9 +134,9 @@ public final class ArrayTable<R, C, V>
    * @throws NullPointerException if {@code table} has a null key
    */
   public static <R, C, V> ArrayTable<R, C, V> create(Table<R, C, V> table) {
-    return table instanceof ArrayTable<?, ?, ?>
-      ? new ArrayTable<R, C, V>((ArrayTable<R, C, V>) table)
-      : new ArrayTable<R, C, V>(table);
+    return table instanceof ArrayTable<?, ?, ?> ?
+      new ArrayTable<R, C, V>((ArrayTable<R, C, V>) table) :
+      new ArrayTable<R, C, V>(table);
   }
 
   private final ImmutableList<R> rowList;
@@ -456,9 +456,9 @@ public final class ArrayTable<R, C, V>
   public V get(@Nullable Object rowKey, @Nullable Object columnKey) {
     Integer rowIndex = rowKeyToIndex.get(rowKey);
     Integer columnIndex = columnKeyToIndex.get(columnKey);
-    return rowIndex == null || columnIndex == null
-      ? null
-      : at(rowIndex, columnIndex);
+    return rowIndex == null || columnIndex == null ?
+      null :
+      at(rowIndex, columnIndex);
   }
 
   /**
@@ -633,9 +633,9 @@ public final class ArrayTable<R, C, V>
   public Map<R, V> column(C columnKey) {
     checkNotNull(columnKey);
     Integer columnIndex = columnKeyToIndex.get(columnKey);
-    return columnIndex == null
-      ? ImmutableMap.<R, V>of()
-      : new Column(columnIndex);
+    return columnIndex == null ?
+      ImmutableMap.<R, V>of() :
+      new Column(columnIndex);
   }
 
   private class Column

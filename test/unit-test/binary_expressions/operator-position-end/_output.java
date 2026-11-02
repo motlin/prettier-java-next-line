@@ -115,13 +115,13 @@ public class BinaryOperations {
       gggggggggg;
 
     var aaaaaaaaaa =
-      bbbbbbbbbb || cccccccccc
-        ? dddddddddd + eeeeeeeeee
-        : ffffffffff + gggggggggg;
+      bbbbbbbbbb || cccccccccc ?
+        dddddddddd + eeeeeeeeee :
+        ffffffffff + gggggggggg;
     aaaaaaaaaa =
-      bbbbbbbbbb || cccccccccc
-        ? dddddddddd + eeeeeeeeee
-        : ffffffffff + gggggggggg;
+      bbbbbbbbbb || cccccccccc ?
+        dddddddddd + eeeeeeeeee :
+        ffffffffff + gggggggggg;
 
     var something = MyClass.staticFunction(
       aaaaaaaaaa,

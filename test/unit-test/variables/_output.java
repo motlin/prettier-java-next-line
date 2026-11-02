@@ -245,9 +245,9 @@ public class Variables {
       someBooleanVariable ? new Object() : null;
 
     Object aParticularlyLongAndObnoxiousNameForIllustrativePurposes =
-      anotherVeryLongNameForIllustrativePurposes != null
-        ? anotherVeryLongNameForIllustrativePurposes
-        : new Object();
+      anotherVeryLongNameForIllustrativePurposes != null ?
+        anotherVeryLongNameForIllustrativePurposes :
+        new Object();
   }
 
   public <
@@ -350,9 +350,9 @@ public class Variables {
       )
     );
 
-    aaaaaaaaaaaaaaaaa = bbbbbbbbbbbbbbbbb
-      ? ccccccccccccccccc
-      : ddddddddddddddddd;
+    aaaaaaaaaaaaaaaaa = bbbbbbbbbbbbbbbbb ?
+      ccccccccccccccccc :
+      ddddddddddddddddd;
 
     aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa =
       bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb =

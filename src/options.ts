@@ -30,7 +30,8 @@ export default {
       { value: "start", description: "" },
       { value: "end", description: "" }
     ],
-    description: "Where to print operators when binary expressions wrap lines."
+    description:
+      "Where to print operators when binary and ternary expressions wrap lines."
   },
   braceStyle: {
     type: "choice",

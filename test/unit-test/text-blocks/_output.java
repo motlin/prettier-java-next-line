@@ -203,18 +203,18 @@ public class TextBlock {
   }
 
   void ternary(boolean condition) {
-    String text = condition
-      ? """
+    String text = condition ?
+      """
         yes
-        """
-      : "no";
+        """ :
+      "no";
 
-    String both = condition
-      ? """
+    String both = condition ?
+      """
         yes
           indented
-        """
-      : """
+        """ :
+      """
         no
         """;
   }

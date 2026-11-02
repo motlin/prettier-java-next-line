@@ -259,9 +259,9 @@ public class Lambda {
     );
 
     a.b(c ->
-      d && eeeeeeeeee.ffffffffff()
-        ? g && hhhhhhhhhh.iiiiiiiiii()
-        : j && kkkkkkkkkk.llllllllll()
+      d && eeeeeeeeee.ffffffffff() ?
+        g && hhhhhhhhhh.iiiiiiiiii() :
+        j && kkkkkkkkkk.llllllllll()
     );
 
     a.b(

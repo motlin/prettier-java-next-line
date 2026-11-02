@@ -180,27 +180,44 @@ export default {
       : alternate
     ```
     */
-    // Text blocks already indent their contents past the `? """` line.
+    const operatorAtEnd = options.experimentalOperatorPosition === "end";
+    // Text blocks already indent their contents past the `? """` line, and
+    // with operators at the end there is no `? ` prefix to align under.
     const printBranch = (
       nodePropertyName: "consequenceNode" | "alternativeNode"
     ) =>
-      isTextBlock(node[nodePropertyName])
+      operatorAtEnd || isTextBlock(node[nodePropertyName])
         ? path.call(print, nodePropertyName)
         : options.useTabs
           ? indent(path.call(print, nodePropertyName))
           : align(2, path.call(print, nodePropertyName));
-    const part = [
-      line,
-      "? ",
-      consequentNode.type === node.type ? ifBreak("", "(") : "",
-      printBranch("consequenceNode"),
-      consequentNode.type === node.type ? ifBreak("", ")") : "",
-      line,
-      ": ",
-      printBranch("alternativeNode")
-    ];
+    const openParen = consequentNode.type === node.type ? ifBreak("", "(") : "";
+    const closeParen =
+      consequentNode.type === node.type ? ifBreak("", ")") : "";
+    const part = operatorAtEnd
+      ? [
+          " ?",
+          line,
+          openParen,
+          printBranch("consequenceNode"),
+          closeParen,
+          " :",
+          line,
+          printBranch("alternativeNode")
+        ]
+      : [
+          line,
+          "? ",
+          openParen,
+          printBranch("consequenceNode"),
+          closeParen,
+          line,
+          ": ",
+          printBranch("alternativeNode")
+        ];
     parts.push(
-      parent.type !== node.type ||
+      operatorAtEnd ||
+        parent.type !== node.type ||
         parent.alternativeNode === node ||
         isParentTest
         ? part
@@ -228,7 +245,7 @@ export default {
 
     const result = maybeGroup([
       printTernaryTest(path, print),
-      forceNoIndent ? parts : indent(parts),
+      forceNoIndent && !operatorAtEnd ? parts : indent(parts),
       breakClosingParen && !shouldExtraIndent ? closingBracketLine(options) : ""
     ]);
 
