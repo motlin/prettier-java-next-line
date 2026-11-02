@@ -9,16 +9,15 @@ import {
   printBlock,
   printBlockStatements,
   printBodyDeclarations,
-  printDanglingComments,
+  printDanglingCommentsInList,
   printModifiers,
   printTypeParameters,
   printValue,
   printVariableDeclaration,
-  type NamedNodePath,
   type NamedNodePrinters
 } from "./helpers.ts";
 
-const { group, hardline, indent, join, line, softline } = builders;
+const { group, hardline, indent, join, line } = builders;
 
 export default {
   class_declaration(path, print, options) {
@@ -233,7 +232,10 @@ export default {
   },
 
   throws(path, print) {
-    return ["throws ", ...join(", ", path.map(print, "namedChildren"))];
+    const exceptions = path.map(print, "namedChildren");
+    return exceptions.length === 1
+      ? ["throws ", exceptions[0]]
+      : ["throws", group(indent([line, ...join([",", line], exceptions)]))];
   },
 
   static_initializer(path, print) {
@@ -450,19 +452,3 @@ const indexByModifier = [
   "non-sealed",
   "strictfp"
 ].reduce((map, name, index) => map.set(name, index), new Map<string, number>());
-
-function printDanglingCommentsInList(path: NamedNodePath) {
-  const { node } = path;
-
-  return node.comments?.some(comment => !(comment.leading || comment.trailing))
-    ? [
-        indent([softline, printDanglingComments(path)]),
-        node.comments.some(
-          ({ type, leading, trailing }) =>
-            !(leading || trailing) && type === SyntaxType.LineComment
-        )
-          ? hardline
-          : softline
-      ]
-    : "";
-}

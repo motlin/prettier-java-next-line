@@ -146,6 +146,22 @@ public class BreakLongFunctionCall {
 
   void methodReferences() {
     dtoEntities.stream().map(UserDto::toString).forEach(LOGGER::info);
+
+    a.b()
+      .c()
+      .d(E[]::f);
+
+    a.b()
+      .c()
+      .d(e.E[]::f);
+
+    a.b()
+      .c()
+      .d(E<F>::f);
+
+    a.b()
+      .c()
+      .d(e.E<F>::f);
   }
 
   void classLiteralArgument() {
@@ -249,5 +265,10 @@ public class BreakLongFunctionCall {
     a().b().<Cccccccccc, Dddddddddd, Eeeeeeeeee, Ffffffffff, Gggggggggg, Hhhhhhhhhh>iiiiiiiiii("jjjjjjjjjj");
 
     a().b().<Cccccccccc, Dddddddddd, Eeeeeeeeee, Ffffffffff, Gggggggggg, Hhhhhhhhhh>iiiiiiiiii("jjjjjjjjjj", "kkkkkkkkkk", "llllllllll", "mmmmmmmmmm", "nnnnnnnnnn");
+  }
+
+  void arrayInitializer() {
+    assertEquals(Bytes.fromInt(0x01020304), new byte[] { 0x01, 0x02, 0x03, 0x04 });
+    community = fromExtended(0x02, new byte[] { 0x00, 0x00, 0x00, 0x64, 0x19, 0x00, 0x00, 0x00, 0x00, 0x64, 0x19, 0x00, 0x00, 0x00, 0x00, 0x64 });
   }
 }

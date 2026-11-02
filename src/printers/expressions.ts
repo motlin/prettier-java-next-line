@@ -7,15 +7,18 @@ import {
   type TernaryExpressionNode
 } from "../node-types.ts";
 import {
+  createTypeCheckFunction,
   hasChild,
   hasDanglingComments,
   hasType,
   closingBracketLine,
   indentInParentheses,
+  isConciselyPrintedArray,
   isReturnOrThrowStatement,
   isTextBlock,
   printAssignment,
   printDanglingComments,
+  printDanglingCommentsInList,
   shouldFlatten,
   type JavaParserOptions,
   type NamedNodePath,
@@ -545,7 +548,7 @@ export default {
         ({ type, leading, trailing }) =>
           !leading && !trailing && type === SyntaxType.LineComment
       );
-      return group(indentInParentheses(printDanglingComments(path), options), {
+      return group(["(", printDanglingCommentsInList(path), ")"], {
         shouldBreak
       });
     }
@@ -627,7 +630,7 @@ export default {
       ]);
     }
 
-    if (shouldExpandLastArg(args)) {
+    if (shouldExpandLastArg(args, options)) {
       const headArgs = printedArguments.slice(0, -1);
       if (headArgs.some(willBreak)) {
         return allArgsBrokenOut();
@@ -999,7 +1002,7 @@ function printMemberChain(
   if (hasType(path, SyntaxType.MethodInvocation)) {
     printedNodes.unshift({
       node,
-      printed: printComments(path, printMethodInvocation(path, print))
+      printed: printMethodInvocation(path, print)
     });
 
     if (hasChild(path, "objectNode")) {
@@ -1008,7 +1011,7 @@ function printMemberChain(
   } else if (hasType(path, SyntaxType.ArrayAccess)) {
     printedNodes.unshift({
       node,
-      printed: printComments(path, printArrayAccess(path, print))
+      printed: printArrayAccess(path, print)
     });
 
     if (hasChild(path, "arrayNode")) {
@@ -1017,7 +1020,7 @@ function printMemberChain(
   } else if (hasType(path, SyntaxType.FieldAccess)) {
     printedNodes.unshift({
       node,
-      printed: printComments(path, printFieldAccess(path, print))
+      printed: printFieldAccess(path, print)
     });
 
     if (hasChild(path, "objectNode")) {
@@ -1025,13 +1028,15 @@ function printMemberChain(
     }
   }
 
+  node.comments
+    ?.filter(({ leading }) => leading)
+    .filter(({ start }) => start.index >= node.start.index)
+    .filter(({ end }) => end.index <= node.end.index)
+    .map(comment => (comment.leading = false));
   const danglingComments = printDanglingComments(path);
   if (danglingComments) {
-    printedNodes[0].printed = [
-      danglingComments,
-      hardline,
-      printedNodes[0].printed
-    ];
+    const lastNode = printedNodes.at(-1)!;
+    lastNode.printed = [danglingComments, hardline, lastNode.printed];
   }
 
   // Once we have a linear list of printed nodes, we want to create groups out
@@ -1184,9 +1189,12 @@ function printMemberChain(
   const flatGroups = groups.flat();
 
   const nodeHasComment =
-    flatGroups.some(node =>
-      node.node.comments?.some(({ leading }) => leading)
-    ) ||
+    flatGroups
+      .at(-1)!
+      .node.comments?.some(({ leading, trailing }) => !leading && !trailing) ||
+    flatGroups
+      .slice(1, -1)
+      .some(node => node.node.comments?.some(({ leading }) => leading)) ||
     flatGroups
       .slice(0, -1)
       .some(node => node.node.comments?.some(({ trailing }) => trailing));
@@ -1394,6 +1402,19 @@ function printBinaryExpressions(
 
 const logicalOperators = new Set(["||", "&&"]);
 
+const isType = createTypeCheckFunction([
+  SyntaxType.VoidType,
+  SyntaxType.IntegralType,
+  SyntaxType.FloatingPointType,
+  SyntaxType.FloatingPointType,
+  SyntaxType.BooleanType,
+  SyntaxType.TypeIdentifier,
+  SyntaxType.ScopedTypeIdentifier,
+  SyntaxType.GenericType,
+  SyntaxType.ArrayType,
+  SyntaxType.AnnotatedType
+]);
+
 function isSimpleCallArgument(node: NamedNode, depth = 2): boolean {
   if (depth <= 0) {
     return false;
@@ -1447,7 +1468,8 @@ function isSimpleCallArgument(node: NamedNode, depth = 2): boolean {
     node.type === SyntaxType.MethodReference ||
     node.type === SyntaxType.UpdateExpression
   ) {
-    return isSimpleCallArgument(node.namedChildren[0], depth);
+    const [qualifierNode] = node.namedChildren;
+    return isType(qualifierNode) || isSimpleCallArgument(qualifierNode, depth);
   }
 
   return false;
@@ -1470,11 +1492,11 @@ function isLiteral(node: NamedNode) {
   );
 }
 
-function isSingleWordType(node: NamedNode) {
-  return [SyntaxType.Identifier, SyntaxType.This, SyntaxType.Super].includes(
-    node.type
-  );
-}
+const isSingleWordType = createTypeCheckFunction([
+  SyntaxType.Identifier,
+  SyntaxType.This,
+  SyntaxType.Super
+]);
 
 function couldExpandArg(arg: NamedNode, lambdaChainRecursion = false) {
   if (
@@ -1519,17 +1541,25 @@ function couldExpandArg(arg: NamedNode, lambdaChainRecursion = false) {
   return false;
 }
 
-function shouldExpandLastArg(args: NamedNode[]) {
+function shouldExpandLastArg(args: NamedNode[], options: JavaParserOptions) {
   const lastArg = args.at(-1)!;
   const penultimateArg = args.at(-2);
   return (
-    !lastArg.comments?.some(({ leading }) => leading) &&
-    !lastArg.comments?.some(({ trailing }) => trailing) &&
+    !lastArg.comments?.some(({ leading, trailing }) => leading || trailing) &&
     couldExpandArg(lastArg) &&
     // If the last two arguments are of the same type,
     // disable last element expansion.
     (!penultimateArg || penultimateArg.type !== lastArg.type) &&
-    (args.length !== 2 || penultimateArg!.type !== SyntaxType.LambdaExpression)
+    // useMemo(() -> func(), [foo, bar, baz])
+    (args.length !== 2 ||
+      penultimateArg!.type !== SyntaxType.LambdaExpression ||
+      lastArg.type !== SyntaxType.ArrayCreationExpression) &&
+    !(
+      args.length > 1 &&
+      lastArg.type === SyntaxType.ArrayCreationExpression &&
+      lastArg.valueNode &&
+      isConciselyPrintedArray(lastArg.valueNode, options)
+    )
   );
 }
 
