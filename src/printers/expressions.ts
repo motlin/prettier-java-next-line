@@ -13,6 +13,7 @@ import {
   closingBracketLine,
   indentInParentheses,
   isReturnOrThrowStatement,
+  isTextBlock,
   printAssignment,
   printDanglingComments,
   shouldFlatten,
@@ -179,12 +180,15 @@ export default {
       : alternate
     ```
     */
+    // Text blocks already indent their contents past the `? """` line.
     const printBranch = (
       nodePropertyName: "consequenceNode" | "alternativeNode"
     ) =>
-      options.useTabs
-        ? indent(path.call(print, nodePropertyName))
-        : align(2, path.call(print, nodePropertyName));
+      isTextBlock(node[nodePropertyName])
+        ? path.call(print, nodePropertyName)
+        : options.useTabs
+          ? indent(path.call(print, nodePropertyName))
+          : align(2, path.call(print, nodePropertyName));
     const part = [
       line,
       "? ",

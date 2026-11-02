@@ -290,7 +290,7 @@ public class BreakLongFunctionCall {
       .replace(
         "SOME",
         """
-        FOO"""
+          FOO"""
       );
   }
 

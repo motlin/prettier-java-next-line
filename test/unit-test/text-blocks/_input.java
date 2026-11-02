@@ -159,4 +159,53 @@ aoeu
     function f(){let i=0;}
     """;
   }
+
+  void declarations() {
+    var plain = """
+        first
+          second
+        """;
+
+    // language=HTML
+    var html = """
+    <html><head><title>Title</title></head></html>
+    """;
+  }
+
+  void arguments() {
+    foo("""
+        first
+        """, second);
+
+    String formatted = """
+        Hello %s
+        """.formatted(name);
+  }
+
+  void ternary(boolean condition) {
+    String text = condition ? """
+        yes
+        """ : "no";
+
+    String both = condition ? """
+        yes
+          indented
+        """ : """
+        no
+        """;
+  }
+
+  void ignored() {
+    // prettier-ignore
+    String ignored = """
+          keep
+            exact
+          """;
+
+    // prettier-ignore
+    // language=HTML
+    String ignoredHtml = """
+    <html><head></head></html>
+    """;
+  }
 }

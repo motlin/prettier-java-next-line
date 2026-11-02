@@ -523,8 +523,16 @@ function inferParser(options: Options, language: string) {
   return getLanguageByLanguageName(languages, language)?.parsers[0];
 }
 
+// Indent the contents and closing delimiter one level deeper than the line
+// that holds the opening delimiter.
 export function printTextBlock(contents: Doc) {
-  return ['"""', hardline, contents, '"""'];
+  return ['"""', indent([hardline, contents, '"""'])];
+}
+
+export function isTextBlock(node: NamedNode) {
+  return (
+    node.type === SyntaxType.StringLiteral && node.children[0].value === '"""'
+  );
 }
 
 export function embedTextBlock(
