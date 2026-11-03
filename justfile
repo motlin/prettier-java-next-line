@@ -34,9 +34,9 @@ pack:
     echo "✅ Package created successfully!"
     echo "📦 Package location: ./local-packages/prettier-java-next-line-$(node -pe "require('./package.json').version").tgz"
 
-# ./install-local.sh
-install-local:
-    ./install-local.sh
+# ./install-local.sh <project_path>
+install-local project_path:
+    ./install-local.sh "{{project_path}}"
 
 # Clean build artifacts
 clean:
