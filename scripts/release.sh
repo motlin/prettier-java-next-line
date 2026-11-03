@@ -26,7 +26,8 @@ if [[ "$(git rev-parse HEAD)" != "$release_commit" || -n "$(git status --porcela
     exit 1
 fi
 
-npm publish . --access public
+# Publish the guarded build above; skip prepublishOnly so it does not rebuild after the clean-tree check.
+npm publish . --access public --ignore-scripts
 # Preserve the published commit locally even if the remote push fails.
 git tag --annotate "$release_tag" "$release_commit" --message "Release $release_tag."
 if ! git push origin "refs/tags/$release_tag"; then
