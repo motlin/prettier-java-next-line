@@ -205,24 +205,27 @@ export function printArrayInitializer(
   const elements = node.namedChildren;
   const isNested = isNestedArray(path);
 
-  if (elements.length === 0) {
-    const danglingComments = printDanglingCommentsInList(path);
-    if (!danglingComments) {
-      return "{}";
-    }
-    const block = group(["{", danglingComments, "}"]);
-    return options.braceStyle === "next-line" && !isNested
-      ? [hardline, block]
-      : block;
-  }
-
-  const groupId = Symbol("array");
-
   const nextLineLayout =
     options.braceStyle === "next-line" &&
     node.type === SyntaxType.ArrayInitializer
       ? options.arrayInitializerLayout
       : undefined;
+
+  if (elements.length === 0) {
+    const danglingComments = printDanglingCommentsInList(path);
+    if (!danglingComments) {
+      return "{}";
+    }
+    const block = ["{", danglingComments, "}"];
+    if (isNested || nextLineLayout === undefined) {
+      return group(block);
+    }
+    return nextLineLayout === "fit"
+      ? group([softline, ...block])
+      : [hardline, group(block)];
+  }
+
+  const groupId = Symbol("array");
 
   const hasDanglingLineComment = node.comments?.some(
     ({ type, leading, trailing }) =>
