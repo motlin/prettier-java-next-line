@@ -1,6 +1,7 @@
 import { builders } from "prettier/doc";
 import { SyntaxType } from "../node-types.ts";
 import {
+  isTextBlock,
   printTextBlock,
   printValue,
   textBlockContents,
@@ -14,7 +15,7 @@ export default {
     const hasInterpolations = path.node.namedChildren.some(
       ({ type }) => type === SyntaxType.StringInterpolation
     );
-    if (hasInterpolations || path.node.children[0].value === '"') {
+    if (hasInterpolations || !isTextBlock(path.node)) {
       return path.map(print, "children");
     }
 

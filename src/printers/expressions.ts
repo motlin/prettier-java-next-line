@@ -1696,9 +1696,7 @@ function shouldExtraIndentForTernaryExpression(
 }
 
 function isStringLiteral(node: NamedNode) {
-  return (
-    node.type === SyntaxType.StringLiteral && node.children[0].value === '"'
-  );
+  return node.type === SyntaxType.StringLiteral && !isTextBlock(node);
 }
 
 class ArgExpansionBailout extends Error {
