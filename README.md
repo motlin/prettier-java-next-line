@@ -105,7 +105,22 @@ public class Example
 
 ## Upstream
 
-Except for brace placement, behavior comes from [Prettier Java](https://github.com/jhipster/prettier-java#readme).
+Behavior comes from [Prettier Java](https://github.com/jhipster/prettier-java#readme), except for the options above and these differences:
+
+- `throws`, `extends` and `implements` clauses always start on their own line, even when the declaration fits on one line.
+- In same-line mode, a class, interface, enum or record declaration with an `extends` or `implements` clause and a non-empty body puts its opening `{` on its own line, so the clause doesn't run into the body:
+
+```java
+class Example
+  extends Base
+{
+
+  void method()
+    throws Exception {
+    doSomething();
+  }
+}
+```
 
 ## License
 
