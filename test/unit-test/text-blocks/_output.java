@@ -85,6 +85,11 @@ public class TextBlock {
         "limit": 10
       }
       """;
+
+    // language=json
+    String escapes = """
+      { "backspace": "a\bb", "formFeed": "a\fb", "octal": "\0\7\12\101\377" }
+      """;
   }
 
   void java() {

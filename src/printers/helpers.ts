@@ -742,13 +742,24 @@ export function embedTextBlock(
     return null;
   }
 
-  const text = unescapeTextBlockContents(textBlockContents(path.node));
+  const contents = textBlockContents(path.node);
+  if (/[\uE000-\uF8FF]/.test(contents)) {
+    return null;
+  }
+  const preservedEscapes: string[] = [];
+  const text = unescapeTextBlockContents(contents, preservedEscapes);
+  if (preservedEscapes.length > 0x1900) {
+    return null;
+  }
 
   return async (
     textToDoc: (text: string, options: Options) => Promise<Doc>
   ) => {
     const doc = await textToDoc(text, { parser });
-    return printTextBlock([escapeDocForTextBlock(doc), hardline]);
+    return printTextBlock([
+      escapeDocForTextBlock(doc, preservedEscapes),
+      hardline
+    ]);
   };
 }
 
@@ -1138,31 +1149,46 @@ function findEmbeddedLanguage(path: NamedNodePath) {
     ?.toLowerCase();
 }
 
-function escapeDocForTextBlock(doc: Doc) {
+function escapeDocForTextBlock(doc: Doc, preservedEscapes: string[]) {
   return mapDoc(doc, currentDoc =>
     typeof currentDoc === "string"
-      ? currentDoc.replace(/\\|"""/g, match =>
-          match === "\\" ? "\\\\" : '""\\"'
+      ? currentDoc.replace(/\\|"""|[\uE000-\uF8FF]/g, match =>
+          match === "\\"
+            ? "\\\\"
+            : match === '"""'
+              ? '""\\"'
+              : (preservedEscapes[match.charCodeAt(0) - 0xe000] ?? match)
         )
       : currentDoc
   );
 }
 
-function unescapeTextBlockContents(text: string) {
-  return text.replace(/\\(?:([stnr"'\\])|\n|\r\n?)/g, (_, escaped) => {
-    switch (escaped) {
-      case "s":
-        return " ";
-      case "t":
-        return "\t";
-      case "n":
-        return "\n";
-      case "r":
-        return "\r";
-      default:
-        return escaped ?? "";
+/**
+ * Escapes with no safe unescaped form (\b, \f and octal) are swapped for
+ * private-use placeholders and restored verbatim by escapeDocForTextBlock.
+ */
+function unescapeTextBlockContents(text: string, preservedEscapes: string[]) {
+  return text.replace(
+    /\\(?:([stnr"'\\])|([bf]|[0-3][0-7]{0,2}|[4-7][0-7]?)|\n|\r\n?)/g,
+    (match, escaped, preserved) => {
+      if (preserved) {
+        preservedEscapes.push(match);
+        return String.fromCharCode(0xe000 + preservedEscapes.length - 1);
+      }
+      switch (escaped) {
+        case "s":
+          return " ";
+        case "t":
+          return "\t";
+        case "n":
+          return "\n";
+        case "r":
+          return "\r";
+        default:
+          return escaped ?? "";
+      }
     }
-  });
+  );
 }
 
 export type NamedNodePrinters = {
