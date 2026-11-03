@@ -88,20 +88,14 @@ sealed class Aaaaaaaaaa<Bbbbbbbbbb, Cccccccccc>
   extends Dddddddddd
   permits Eeeeeeeeee {}
 
-class Aaaaaaaaaa<
-  Bbbbbbbbbb,
-  Cccccccccc
->
+class Aaaaaaaaaa<Bbbbbbbbbb, Cccccccccc>
   extends Dddddddddd<Eeeeeeeeee, Ffffffffff>
 {
 
   void a() {}
 }
 
-class Aaaaaaaaaa<
-  Bbbbbbbbbb,
-  Cccccccccc
->
+class Aaaaaaaaaa<Bbbbbbbbbb, Cccccccccc>
   extends Dddddddddd<Eeeeeeeeee, Ffffffffff, Gggggggggg, Hhhhhhhhhh, Iiiiiiiiii>
 {
 
@@ -187,3 +181,12 @@ sealed class Aaaaaaaaaa<
     Ssssssssss,
     Tttttttttt,
     Uuuuuuuuuu {}
+
+interface Aaaaaaaaaa<Bbbbbbbbbb, Cccccccccc>
+  extends Dddddddddd<Eeeeeeeeee, Ffffffffff>
+{
+  void a();
+}
+
+interface Aaaaaaaaaa<Bbbbbbbbbb, Cccccccccc>
+  extends Dddddddddd<Eeeeeeeeee, Ffffffffff> {}

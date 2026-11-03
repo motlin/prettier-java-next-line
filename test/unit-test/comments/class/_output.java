@@ -197,10 +197,7 @@ public final class ArrayTable<R, C, V>
     }
   }
 
-  private abstract static class ArrayMap<
-    K,
-    V
-  >
+  private abstract static class ArrayMap<K, V>
     extends IteratorBasedAbstractMap<K, V>
   {
 

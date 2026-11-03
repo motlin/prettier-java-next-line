@@ -45,20 +45,14 @@ class Aaaaaaaaaa<Bbbbbbbbbb, Cccccccccc>
   extends Dddddddddd
   implements Eeeeeeeeee {}
 
-class Aaaaaaaaaa<
-  Bbbbbbbbbb,
-  Cccccccccc
->
+class Aaaaaaaaaa<Bbbbbbbbbb, Cccccccccc>
   extends Dddddddddd<Eeeeeeeeee, Ffffffffff>
 {
 
   void a() {}
 }
 
-class Aaaaaaaaaa<
-  Bbbbbbbbbb,
-  Cccccccccc
->
+class Aaaaaaaaaa<Bbbbbbbbbb, Cccccccccc>
   extends Dddddddddd<Eeeeeeeeee, Ffffffffff, Gggggggggg, Hhhhhhhhhh, Iiiiiiiiii>
 {
 

@@ -37,9 +37,7 @@ export default {
       parts.push(
         hasMultipleClauses
           ? group(indent(typeParameters))
-          : options?.braceStyle === "next-line"
-            ? group(typeParameters)
-            : typeParameters
+          : group(typeParameters)
       );
     }
 
