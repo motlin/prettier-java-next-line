@@ -2,7 +2,7 @@ import { expectSnippetToBeFormatted } from "../../../test-utils.ts";
 
 describe("Switches", () => {
   describe("Switch Statement", () => {
-    it("should format switch statement", () => {
+    it("should format switch statement", async () => {
       const snippet =
         "switch (answer) {\n" +
         "  case YES:\n" +
@@ -17,9 +17,9 @@ describe("Switches", () => {
         '    return "Yes";\n' +
         "  default:\n" +
         '    return "NO";\n' +
-        "}";
+        "}\n";
 
-      expectSnippetToBeFormatted({
+      await expectSnippetToBeFormatted({
         snippet,
         expectedOutput
       });

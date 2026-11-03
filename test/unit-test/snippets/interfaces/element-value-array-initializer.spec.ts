@@ -1,17 +1,17 @@
 import { expectSnippetToBeFormatted } from "../../../test-utils.ts";
 
 describe("element Value Array Initializer", () => {
-  it("can format a elementValueArrayInitializer", () => {
-    expectSnippetToBeFormatted({
-      snippet: "{alpha}",
-      expectedOutput: "{ alpha }"
+  it("can format a elementValueArrayInitializer", async () => {
+    await expectSnippetToBeFormatted({
+      snippet: "@A({alpha}) class B {}",
+      expectedOutput: "@A({ alpha })\nclass B {}\n"
     });
   });
 
-  it("keeps a short elementValueArrayInitializer inline with next-line braces", () => {
-    expectSnippetToBeFormatted({
-      snippet: '{"alpha", "beta", "charlie"}',
-      expectedOutput: '{ "alpha", "beta", "charlie" }',
+  it("keeps a short elementValueArrayInitializer inline with next-line braces", async () => {
+    await expectSnippetToBeFormatted({
+      snippet: '@A({"alpha", "beta", "charlie"}) class B {}',
+      expectedOutput: '@A({ "alpha", "beta", "charlie" })\nclass B\n{\n}\n',
       prettierOptions: {
         braceStyle: "next-line"
       }
@@ -19,58 +19,59 @@ describe("element Value Array Initializer", () => {
   });
 
   describe("Trailing Commas", () => {
-    it("should remove extra comma in elementValueArrayInitializer by default", () => {
-      expectSnippetToBeFormatted({
-        snippet: "{alpha,}",
-        expectedOutput: "{ alpha }"
+    it("should remove extra comma in elementValueArrayInitializer by default", async () => {
+      await expectSnippetToBeFormatted({
+        snippet: "@A({alpha,}) class B {}",
+        expectedOutput: "@A({ alpha })\nclass B {}\n"
       });
     });
 
-    it("should remove extra comma in elementValueArrayInitializer by default", () => {
+    it("should remove extra comma in elementValueArrayInitializer if it does not fit in one line and --trailing-comma='none'", async () => {
       // prettier-ignore
       const expectedOutput =
-        "{\n" +
+        "@A({\n" +
         "  oneVeryLongArrayValue\n" +
-        "}";
+        "})\nclass B {}\n";
 
-      expectSnippetToBeFormatted({
-        snippet: "{oneVeryLongArrayValue,}",
+      await expectSnippetToBeFormatted({
+        snippet: "@A({oneVeryLongArrayValue,}) class B {}",
         expectedOutput,
         prettierOptions: {
-          printWidth: 15
+          printWidth: 15,
+          trailingComma: "none"
         }
       });
     });
 
-    it("should remove extra comma in elementValueArrayInitializer if it fit in one line and --trailing-comma='all'", () => {
-      expectSnippetToBeFormatted({
-        snippet: "{oneVeryLongArrayValue,}",
-        expectedOutput: "{ oneVeryLongArrayValue }",
+    it("should remove extra comma in elementValueArrayInitializer if it fit in one line and --trailing-comma='all'", async () => {
+      await expectSnippetToBeFormatted({
+        snippet: "@A({oneVeryLongArrayValue,}) class B {}",
+        expectedOutput: "@A({ oneVeryLongArrayValue })\nclass B {}\n",
         prettierOptions: {
           trailingComma: "all"
         }
       });
     });
 
-    it("should not add extra comma in elementValueArrayInitializer if it fit in one line and --trailing-comma='all'", () => {
-      expectSnippetToBeFormatted({
-        snippet: "{oneVeryLongArrayValue}",
-        expectedOutput: "{ oneVeryLongArrayValue }",
+    it("should not add extra comma in elementValueArrayInitializer if it fit in one line and --trailing-comma='all'", async () => {
+      await expectSnippetToBeFormatted({
+        snippet: "@A({oneVeryLongArrayValue}) class B {}",
+        expectedOutput: "@A({ oneVeryLongArrayValue })\nclass B {}\n",
         prettierOptions: {
           trailingComma: "all"
         }
       });
     });
 
-    it("should keep extra comma in elementValueArrayInitializer if it does not fit in one line and --trailing-comma='all'", () => {
+    it("should keep extra comma in elementValueArrayInitializer if it does not fit in one line and --trailing-comma='all'", async () => {
       // prettier-ignore
       const expectedOutput =
-        "{\n" +
-        "  oneVeryLongArrayValue/* COMMA */,\n" +
-        "}";
+        "@A({\n" +
+        "  oneVeryLongArrayValue /* COMMA */,\n" +
+        "})\nclass B {}\n";
 
-      expectSnippetToBeFormatted({
-        snippet: "{oneVeryLongArrayValue /* COMMA */,}",
+      await expectSnippetToBeFormatted({
+        snippet: "@A({oneVeryLongArrayValue /* COMMA */,}) class B {}",
         expectedOutput,
         prettierOptions: {
           printWidth: 15,
@@ -79,15 +80,15 @@ describe("element Value Array Initializer", () => {
       });
     });
 
-    it("should add extra comma in elementValueArrayInitializer if it does not fit in one line and --trailing-comma='all'", () => {
+    it("should add extra comma in elementValueArrayInitializer if it does not fit in one line and --trailing-comma='all'", async () => {
       // prettier-ignore
       const expectedOutput =
-        "{\n" +
+        "@A({\n" +
         "  oneVeryLongArrayValue,\n" +
-        "}";
+        "})\nclass B {}\n";
 
-      expectSnippetToBeFormatted({
-        snippet: "{oneVeryLongArrayValue}",
+      await expectSnippetToBeFormatted({
+        snippet: "@A({oneVeryLongArrayValue}) class B {}",
         expectedOutput,
         prettierOptions: {
           printWidth: 15,

@@ -1,79 +1,82 @@
 import { expectSnippetToBeFormatted } from "../../../test-utils.ts";
 
 describe("Class Body", () => {
-  it("should handle an empty class body", () => {
-    expectSnippetToBeFormatted({
-      snippet: "{ }",
-      expectedOutput: "{}"
+  it("should handle an empty class body", async () => {
+    await expectSnippetToBeFormatted({
+      snippet: "class A { }",
+      expectedOutput: "class A {}\n"
     });
   });
 
-  it("should handle a class body with one field declaration", () => {
+  it("should handle a class body with one field declaration", async () => {
     // prettier-ignore
     const expectedOutput =
-      "{\n" +
+      "class A {\n" +
+      "\n" +
       "  int i;\n" +
-      "}";
+      "}\n";
 
-    expectSnippetToBeFormatted({
-      snippet: "{int i;}",
+    await expectSnippetToBeFormatted({
+      snippet: "class A {int i;}",
       expectedOutput
     });
   });
 
-  it("should handle blank lines between field declarations", () => {
+  it("should handle blank lines between field declarations", async () => {
     // prettier-ignore
     const snippet =
-      "{\n" +
+      "class A {\n" +
       "  int i;\n" +
       "  int j;\n" +
       "  \n" +
       "  int k;\n" +
-      "}";
+      "}\n";
 
     // prettier-ignore
     const expectedOutput =
-      "{\n" +
+      "class A {\n" +
+      "\n" +
       "  int i;\n" +
       "  int j;\n" +
       "\n" +
       "  int k;\n" +
-      "}";
+      "}\n";
 
-    expectSnippetToBeFormatted({
+    await expectSnippetToBeFormatted({
       snippet,
       expectedOutput
     });
   });
 
-  it("should add exactly one blank lines between field declarations", () => {
+  it("should add exactly one blank lines between field declarations", async () => {
     // prettier-ignore
     const snippet =
-      "{\n" +
+      "class A {\n" +
       "  int i;\n" +
       "\n" +
       "\n" +
       "  \n" +
       "  int j;\n" +
-      "}";
+      "}\n";
 
     // prettier-ignore
     const expectedOutput =
-      "{\n" +
+      "class A {\n" +
+      "\n" +
       "  int i;\n" +
       "\n" +
       "  int j;\n" +
-      "}";
+      "}\n";
 
-    expectSnippetToBeFormatted({
+    await expectSnippetToBeFormatted({
       snippet,
       expectedOutput
     });
   });
 
-  it("should add exactly one blank lines before method declarations", () => {
+  it("should add exactly one blank lines before method declarations", async () => {
     const snippet =
-      "{\n" +
+      "class A {\n" +
       "  int i;\n" +
       "  void t() {}" +
       "\n" +
@@ -81,10 +84,11 @@ describe("Class Body", () => {
       "\n" +
       "\n" +
       "void v() {}" +
-      "}";
+      "}\n";
 
     const expectedOutput =
-      "{\n" +
+      "class A {\n" +
+      "\n" +
       "  int i;\n" +
       "\n" +
       "  void t() {}\n" +
@@ -92,35 +96,36 @@ describe("Class Body", () => {
       "  void u() {}\n" +
       "\n" +
       "  void v() {}\n" +
-      "}";
+      "}\n";
 
-    expectSnippetToBeFormatted({
+    await expectSnippetToBeFormatted({
       snippet,
       expectedOutput
     });
   });
 
   describe("Empty statements", () => {
-    it("should handle an class body with only empty statements", () => {
-      expectSnippetToBeFormatted({
-        snippet: "{;;}",
-        expectedOutput: "{}"
+    it("should handle an class body with only empty statements", async () => {
+      await expectSnippetToBeFormatted({
+        snippet: "class A {;;}",
+        expectedOutput: "class A {}\n"
       });
     });
 
-    it("should handle blank lines between field declarations", () => {
+    it("should handle blank lines between field declarations", async () => {
       const snippet =
-        "{\n" +
+        "class A {\n" +
         "  int i;;int j;;\n" +
         "  int k;;\n" +
         "  ;\n" +
         "  int l;;\n" +
         "  \n" +
         "  int m;;\n" +
-        "}";
+        "}\n";
 
       const expectedOutput =
-        "{\n" +
+        "class A {\n" +
+        "\n" +
         "  int i;\n" +
         "  int j;\n" +
         "  int k;\n" +
@@ -128,17 +133,17 @@ describe("Class Body", () => {
         "  int l;\n" +
         "\n" +
         "  int m;\n" +
-        "}";
+        "}\n";
 
-      expectSnippetToBeFormatted({
+      await expectSnippetToBeFormatted({
         snippet,
         expectedOutput
       });
     });
 
-    it("should handle blank lines before method declarations", () => {
+    it("should handle blank lines before method declarations", async () => {
       const snippet =
-        "{\n" +
+        "class A {\n" +
         "  int i;;\n" +
         "  void t() {}" +
         "\n" +
@@ -147,10 +152,11 @@ describe("Class Body", () => {
         "\n;;" +
         "\n" +
         "void v() {}" +
-        "}";
+        "}\n";
 
       const expectedOutput =
-        "{\n" +
+        "class A {\n" +
+        "\n" +
         "  int i;\n" +
         "\n" +
         "  void t() {}\n" +
@@ -158,45 +164,43 @@ describe("Class Body", () => {
         "  void u() {}\n" +
         "\n" +
         "  void v() {}\n" +
-        "}";
+        "}\n";
 
-      expectSnippetToBeFormatted({
+      await expectSnippetToBeFormatted({
         snippet,
         expectedOutput
       });
     });
 
-    it("should print comments attached to empty statement where only empty statements", () => {
-      expectSnippetToBeFormatted({
-        snippet: "{;/* TODO */;}",
-        expectedOutput: "{\n" + "  /* TODO */\n" + "}"
+    it("should print comments attached to empty statement where only empty statements", async () => {
+      await expectSnippetToBeFormatted({
+        snippet: "class A {;/* TODO */;}",
+        expectedOutput: "class A {\n" + "  /* TODO */\n" + "}\n"
       });
     });
 
-    it("should print comments attached to empty statement between field declarations", () => {
+    it("should print comments attached to empty statement between field declarations", async () => {
       const snippet =
-        "{\n" +
+        "class A {\n" +
         "  int i;/* TODO */;int j;;\n" +
         "  int k;/* TODO */;\n" +
         "  \n" +
         "  /* TODO */;\n" +
         "  \n" +
         "  int l;;\n" +
-        "}";
+        "}\n";
 
       const expectedOutput =
-        "{\n" +
-        "  int i;\n" +
-        "  /* TODO */\n" +
-        "  int j;\n" +
-        "  int k;\n" +
+        "class A {\n" +
         "\n" +
-        "  /* TODO */\n" +
-        "  /* TODO */\n" +
-        "  int l;\n" +
-        "}";
+        "  int i; /* TODO */\n" +
+        "  int j;\n" +
+        "  int k; /* TODO */\n" +
+        "\n" +
+        "  /* TODO */ int l;\n" +
+        "}\n";
 
-      expectSnippetToBeFormatted({
+      await expectSnippetToBeFormatted({
         snippet,
         expectedOutput
       });

@@ -1,17 +1,17 @@
 import { expectSnippetToBeFormatted } from "../../../../test-utils.ts";
 
 describe("PackageOrTypeName", () => {
-  it("can format a PackageOrTypeName without dots", () => {
-    expectSnippetToBeFormatted({
-      snippet: "com",
-      expectedOutput: "com"
+  it("can format a PackageOrTypeName without dots", async () => {
+    await expectSnippetToBeFormatted({
+      snippet: "package com;",
+      expectedOutput: "package com;\n"
     });
   });
 
-  it("can format a PackageOrTypeName with dots", () => {
-    expectSnippetToBeFormatted({
-      snippet: "com.iluwatar.abstractdocument",
-      expectedOutput: "com.iluwatar.abstractdocument"
+  it("can format a PackageOrTypeName with dots", async () => {
+    await expectSnippetToBeFormatted({
+      snippet: "package com.iluwatar.abstractdocument;",
+      expectedOutput: "package com.iluwatar.abstractdocument;\n"
     });
   });
 });

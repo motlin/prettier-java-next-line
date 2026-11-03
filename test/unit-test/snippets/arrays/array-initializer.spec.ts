@@ -1,75 +1,76 @@
 import { expectSnippetToBeFormatted } from "../../../test-utils.ts";
 
 describe("Arrays Initializer", () => {
-  it("can format an empty arrayInitializer", () => {
-    expectSnippetToBeFormatted({
-      snippet: "{ }",
-      expectedOutput: "{}"
+  it("can format an empty arrayInitializer", async () => {
+    await expectSnippetToBeFormatted({
+      snippet: "int[] a = { };",
+      expectedOutput: "int[] a = {};\n"
     });
   });
 
-  it("can format a arrayInitializer", () => {
-    expectSnippetToBeFormatted({
-      snippet: "{alpha}",
-      expectedOutput: "{ alpha }"
+  it("can format a arrayInitializer", async () => {
+    await expectSnippetToBeFormatted({
+      snippet: "int[] a = {alpha};",
+      expectedOutput: "int[] a = { alpha };\n"
     });
   });
 
   describe("Trailing Commas", () => {
-    it("should remove extra comma in arrayInitializer by default", () => {
-      expectSnippetToBeFormatted({
-        snippet: "{alpha,}",
-        expectedOutput: "{ alpha }"
+    it("should remove extra comma in arrayInitializer by default", async () => {
+      await expectSnippetToBeFormatted({
+        snippet: "int[] a = {alpha,};",
+        expectedOutput: "int[] a = { alpha };\n"
       });
     });
 
-    it("should remove extra comma in arrayInitializer by default", () => {
-      const snippet = "{oneVeryLongArrayValue,}";
+    it("should remove extra comma in arrayInitializer if it does not fit in one line and --trailing-comma='none'", async () => {
+      const snippet = "int[] a = {oneVeryLongArrayValue,};";
       const prettierOptions = {
-        printWidth: 15
+        printWidth: 15,
+        trailingComma: "none"
       };
       // prettier-ignore
       const expectedOutput =
-        "{\n" +
+        "int[] a = {\n" +
         "  oneVeryLongArrayValue\n" +
-        "}";
+        "};\n";
 
-      expectSnippetToBeFormatted({
+      await expectSnippetToBeFormatted({
         snippet,
         expectedOutput,
         prettierOptions
       });
     });
 
-    it("should remove extra comma in arrayInitializer if it fit in one line and --trailing-comma='all'", () => {
-      expectSnippetToBeFormatted({
-        snippet: "{oneVeryLongArrayValue,}",
-        expectedOutput: "{ oneVeryLongArrayValue }",
+    it("should remove extra comma in arrayInitializer if it fit in one line and --trailing-comma='all'", async () => {
+      await expectSnippetToBeFormatted({
+        snippet: "int[] a = {oneVeryLongArrayValue,};",
+        expectedOutput: "int[] a = { oneVeryLongArrayValue };\n",
         prettierOptions: {
           trailingComma: "all"
         }
       });
     });
 
-    it("should not add extra comma in arrayInitializer if it fit in one line and --trailing-comma='all'", () => {
-      expectSnippetToBeFormatted({
-        snippet: "{oneVeryLongArrayValue}",
-        expectedOutput: "{ oneVeryLongArrayValue }",
+    it("should not add extra comma in arrayInitializer if it fit in one line and --trailing-comma='all'", async () => {
+      await expectSnippetToBeFormatted({
+        snippet: "int[] a = {oneVeryLongArrayValue};",
+        expectedOutput: "int[] a = { oneVeryLongArrayValue };\n",
         prettierOptions: {
           trailingComma: "all"
         }
       });
     });
 
-    it("should keep extra comma in arrayInitializer if it does not fit in one line and --trailing-comma='all'", () => {
+    it("should keep extra comma in arrayInitializer if it does not fit in one line and --trailing-comma='all'", async () => {
       // prettier-ignore
       const expectedOutput =
-        "{\n" +
-        "  oneVeryLongArrayValue/* COMMA */,\n" +
-        "}";
+        "int[] a = {\n" +
+        "  oneVeryLongArrayValue /* COMMA */,\n" +
+        "};\n";
 
-      expectSnippetToBeFormatted({
-        snippet: "{oneVeryLongArrayValue /* COMMA */,}",
+      await expectSnippetToBeFormatted({
+        snippet: "int[] a = {oneVeryLongArrayValue /* COMMA */,};",
         expectedOutput,
         prettierOptions: {
           printWidth: 15,
@@ -78,15 +79,15 @@ describe("Arrays Initializer", () => {
       });
     });
 
-    it("should add extra comma in arrayInitializer if it does not fit in one line and --trailing-comma='all'", () => {
+    it("should add extra comma in arrayInitializer if it does not fit in one line and --trailing-comma='all'", async () => {
       // prettier-ignore
       const expectedOutput =
-        "{\n" +
+        "int[] a = {\n" +
         "  oneVeryLongArrayValue,\n" +
-        "}";
+        "};\n";
 
-      expectSnippetToBeFormatted({
-        snippet: "{oneVeryLongArrayValue}",
+      await expectSnippetToBeFormatted({
+        snippet: "int[] a = {oneVeryLongArrayValue};",
         expectedOutput,
         prettierOptions: {
           printWidth: 15,
