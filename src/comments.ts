@@ -114,6 +114,7 @@ export function handleLineComment(
     handleLabeledStatementComments,
     handleLambdaExpressionComments,
     handleMemberChainComments,
+    handleMethodHeaderComments,
     handleModifiersComments,
     handleNameComments,
     handleTernaryExpressionComments,
@@ -272,6 +273,32 @@ function getMemberChainRoot(node: SyntaxNode): SyntaxNode {
     }
   }
   return current;
+}
+
+/**
+ * With same-line braces, `{` follows the method header on the same line, so a
+ * comment between the header and the block moves into the block.
+ */
+function handleMethodHeaderComments(
+  commentNode: CommentNode,
+  options: JavaParserOptions
+) {
+  const { enclosingNode, followingNode } = commentNode;
+  if (
+    options.braceStyle !== "same-line" ||
+    enclosingNode?.type !== SyntaxType.MethodDeclaration ||
+    followingNode?.type !== SyntaxType.Block ||
+    followingNode !== enclosingNode.bodyNode
+  ) {
+    return false;
+  }
+  const firstStatement = followingNode.namedChildren.at(0);
+  if (firstStatement) {
+    util.addLeadingComment(firstStatement, commentNode);
+  } else {
+    util.addDanglingComment(followingNode, commentNode, undefined);
+  }
+  return true;
 }
 
 function handleModifiersComments(commentNode: CommentNode) {
