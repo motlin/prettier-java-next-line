@@ -252,7 +252,7 @@ export default {
     const shouldExtraIndent = shouldExtraIndentForTernaryExpression(path);
 
     const result = maybeGroup([
-      printTernaryTest(path, print),
+      printTernaryTest(path, print, operatorAtEnd),
       forceNoIndent && !operatorAtEnd ? parts : indent(parts),
       breakClosingParen && !shouldExtraIndent ? closingBracketLine(options) : ""
     ]);
@@ -1609,7 +1609,8 @@ function isHopefullyShortCallArgument(node: NamedNode) {
 
 function printTernaryTest(
   path: AstPath<TernaryExpressionNode>,
-  print: PrintFunction
+  print: PrintFunction,
+  operatorAtEnd: boolean
 ) {
   const { node, parent } = path;
 
@@ -1623,8 +1624,14 @@ function printTernaryTest(
    *       ^^ align(2)
    *       ? d
    *       : e
+   *
+   * With operators at the end there is no `: ` prefix to align under.
    */
-  if (parent?.type === node.type && parent.alternativeNode === node) {
+  if (
+    !operatorAtEnd &&
+    parent?.type === node.type &&
+    parent.alternativeNode === node
+  ) {
     return align(2, printed);
   }
   return printed;

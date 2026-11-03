@@ -81,6 +81,19 @@ class ConditionalExpression {
 					gggggggggg;
 	}
 
+	void nestedTernaryWithLongTest() {
+		aaaaaaaaaa ?
+			bbbbbbbbbb :
+			cccccccccc &&
+			dddddddddd &&
+			eeeeeeeeee &&
+			ffffffffff &&
+			gggggggggg &&
+			hhhhhhhhhh ?
+				iiiiiiiiii :
+				jjjjjjjjjj;
+	}
+
 	void ternaryWithComments() {
 		a ?
 			// b
