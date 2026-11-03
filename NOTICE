@@ -3,3 +3,10 @@ Copyright 2018-2026 the original author or authors from the JHipster project.
 
 For more information on the prettier-java project, see https://github.com/jhipster/prettier-java
 prettier-java is part of the JHipster organization on GitHub, for more information on JHipster, see https://www.jhipster.tech/
+
+prettier-java-next-line
+Copyright 2025-2026 Craig Motlin and contributors.
+
+prettier-java-next-line is a fork of prettier-java that adds a braceStyle option for
+placing opening braces on the next line (Allman style) or the same line.
+For more information on the prettier-java-next-line project, see https://github.com/motlin/prettier-java-next-line
