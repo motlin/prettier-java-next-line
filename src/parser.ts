@@ -13,17 +13,19 @@ export default {
   async parse(text) {
     const tree = (await parser).parse(text)!;
 
-    const { rootNode } = tree;
-    if (rootNode.hasError) {
-      throw new Error("Failed to parse: " + rootNode);
+    try {
+      const { rootNode } = tree;
+      if (rootNode.hasError) {
+        throw new Error("Failed to parse: " + rootNode);
+      }
+
+      const ast = processTree(rootNode);
+      determinePrettierIgnoreRanges(ast);
+
+      return ast;
+    } finally {
+      tree.delete();
     }
-
-    const ast = processTree(rootNode);
-    determinePrettierIgnoreRanges(ast);
-
-    tree.delete();
-
-    return ast;
   },
   astFormat: "java",
   hasPragma(text) {
