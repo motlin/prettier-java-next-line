@@ -230,10 +230,12 @@ function groupImports(imports: ImportEntry[], importOrder: string) {
       .reduce((best, candidate) =>
         candidate.length > best.length ? candidate : best
       );
-    importsByPrefix.set(prefix, [
-      ...(importsByPrefix.get(prefix) ?? []),
-      { key, entry }
-    ]);
+    const bucket = importsByPrefix.get(prefix);
+    if (bucket) {
+      bucket.push({ key, entry });
+    } else {
+      importsByPrefix.set(prefix, [{ key, entry }]);
+    }
   }
 
   return groups
