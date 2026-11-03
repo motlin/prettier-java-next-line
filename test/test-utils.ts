@@ -1,6 +1,13 @@
 import { expect } from "chai";
 import { spawnSync } from "node:child_process";
-import { cpSync, existsSync, readdirSync, readFileSync, rmSync } from "node:fs";
+import {
+  cpSync,
+  existsSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync
+} from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import prettier from "prettier";
@@ -63,13 +70,36 @@ export function testSample(testFolder: string, exclusive?: boolean) {
 export function testRepositorySample(
   testFolder: string,
   command: string,
-  args: string[]
+  args: string[],
+  unwrittenPaths: string[] = []
 ) {
-  describe(`Prettify the repository <${testFolder}>`, function () {
+  (["same-line", "next-line"] as const).forEach(braceStyle =>
+    testRepositorySampleWithBraceStyle(
+      testFolder,
+      command,
+      args,
+      unwrittenPaths,
+      braceStyle
+    )
+  );
+}
+
+function testRepositorySampleWithBraceStyle(
+  testFolder: string,
+  command: string,
+  args: string[],
+  unwrittenPaths: string[],
+  braceStyle: "same-line" | "next-line"
+) {
+  describe(`Prettify the repository <${testFolder}> with braceStyle ${braceStyle}`, function () {
     this.timeout(0);
 
     const testsamples = path.resolve(__dirname, "../test-samples");
-    const samplesDir = path.resolve(testsamples, path.basename(testFolder));
+    const samplesDir = path.resolve(
+      testsamples,
+      `${path.basename(testFolder)}-${braceStyle}`
+    );
+    const prettierOptions = { braceStyle };
 
     if (existsSync(samplesDir)) {
       rmSync(samplesDir, { recursive: true });
@@ -80,18 +110,25 @@ export function testRepositorySample(
       .filter(filePath => filePath.endsWith(".java"))
       .forEach(filePath => {
         it(`Performs a stable formatting for <${filePath}>`, async () => {
-          const javaFileText = readFileSync(
-            path.join(samplesDir, filePath),
-            "utf8"
-          );
+          const javaFilePath = path.join(samplesDir, filePath);
+          const javaFileText = readFileSync(javaFilePath, "utf8");
 
-          const firstPass = await formatJavaSnippet({ snippet: javaFileText });
-          const secondPass = await formatJavaSnippet({ snippet: firstPass });
+          const firstPass = await formatJavaSnippet({
+            snippet: javaFileText,
+            prettierOptions
+          });
+          const secondPass = await formatJavaSnippet({
+            snippet: firstPass,
+            prettierOptions
+          });
           expect(secondPass).to.equal(firstPass);
+          if (!unwrittenPaths.some(prefix => filePath.startsWith(prefix))) {
+            writeFileSync(javaFilePath, firstPass);
+          }
         });
       });
 
-    it(`verify semantic validity ${testFolder}`, function () {
+    it(`verify semantic validity ${testFolder} with braceStyle ${braceStyle}`, function () {
       const code = spawnSync(command, args, {
         cwd: samplesDir,
         maxBuffer: Infinity
@@ -102,7 +139,7 @@ export function testRepositorySample(
         (code.output ?? []).forEach(out => console.log("output", out));
 
         expect.fail(
-          `Cannot build ${testFolder}, please check the output below:\n${code.error ?? code.stderr}`
+          `Cannot build ${testFolder} with braceStyle ${braceStyle}, please check the output below:\n${code.error ?? code.stderr}`
         );
       }
     });

@@ -15,7 +15,9 @@ describe("prettier-java", () => {
   testRepositorySample(
     path.resolve(__dirname, "../../samples/spring-boot"),
     "./gradlew",
-    ["compileJava"]
+    ["compileJava"],
+    // buildSrc runs spring-javaformat and Checkstyle, which reject reformatted files
+    ["buildSrc/"]
   );
 
   jhipsterRepository.forEach(repository => {
