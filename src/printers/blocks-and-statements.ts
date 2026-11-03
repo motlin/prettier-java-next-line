@@ -11,6 +11,7 @@ import {
   hasLeadingComments,
   indentInParentheses,
   printBlock,
+  printBlockSeparator,
   printBlockStatements,
   printDanglingComments,
   printModifiers,
@@ -40,8 +41,14 @@ export default {
 
   local_variable_declaration: printVariableDeclaration,
 
-  labeled_statement(path, print) {
-    return join(": ", path.map(print, "namedChildren"));
+  labeled_statement(path, print, options) {
+    const [label, statement] = path.map(print, "namedChildren");
+    return [
+      label,
+      ":",
+      printStatementSeparator(path.node.namedChildren[1].type, options),
+      statement
+    ];
   },
 
   expression_statement(path, print) {
@@ -62,7 +69,10 @@ export default {
     if (path.node.consequenceNode.type === ";") {
       statement.push(";");
     } else {
-      statement.push(" ", path.call(print, "consequenceNode"));
+      statement.push(
+        printStatementSeparator(path.node.consequenceNode.type, options),
+        path.call(print, "consequenceNode")
+      );
     }
 
     if (!hasChild(path, "alternativeNode")) {
@@ -84,7 +94,10 @@ export default {
     if (path.node.alternativeNode.type === ";") {
       statement.push(";");
     } else {
-      statement.push(" ", path.call(print, "alternativeNode"));
+      statement.push(
+        printStatementSeparator(path.node.alternativeNode.type, options),
+        path.call(print, "alternativeNode")
+      );
     }
 
     return statement;
@@ -94,19 +107,20 @@ export default {
     return ["assert ", ...join(" : ", path.map(print, "namedChildren")), ";"];
   },
 
-  switch_expression(path, print) {
-    return join(" ", [
-      "switch",
+  switch_expression(path, print, options) {
+    return [
+      "switch ",
       path.call(print, "conditionNode"),
+      printBlockSeparator(options),
       path.call(print, "bodyNode")
-    ]);
+    ];
   },
 
   switch_block(path, print, options) {
     return printBlock(path, path.map(print, "namedChildren"), options);
   },
 
-  switch_block_statement_group(path, print) {
+  switch_block_statement_group(path, print, options) {
     const parts: Doc[] = [];
 
     path.each(child => {
@@ -122,7 +136,10 @@ export default {
       firstStatementIndex === path.node.namedChildren.length - 1 &&
       path.node.namedChildren[firstStatementIndex].type === SyntaxType.Block;
     if (onlyStatementIsBlock) {
-      parts.push(" ", path.call(print, "namedChildren", firstStatementIndex));
+      parts.push(
+        printBlockSeparator(options),
+        path.call(print, "namedChildren", firstStatementIndex)
+      );
     } else if (firstStatementIndex !== -1) {
       parts.push(
         indent([hardline, ...join(hardline, printBlockStatements(path, print))])
@@ -160,7 +177,7 @@ export default {
       : group(label);
   },
 
-  switch_rule(path, print) {
+  switch_rule(path, print, options) {
     const bodyIndex = path.node.namedChildren.findIndex(
       ({ type }) =>
         type === SyntaxType.Block ||
@@ -178,18 +195,18 @@ export default {
     if (bodyNode.type !== SyntaxType.Block && hasLeadingComments(bodyNode)) {
       parts.push(indent([hardline, body]));
     } else {
-      parts.push(" ", body);
+      parts.push(printStatementSeparator(bodyNode.type, options), body);
     }
     return parts;
   },
 
-  while_statement(path, print) {
+  while_statement(path, print, options) {
     const parts = ["while ", path.call(print, "conditionNode")];
     const body = path.call(print, "bodyNode");
 
     const bodyType = path.node.bodyNode.type;
     if (bodyType === SyntaxType.Block) {
-      parts.push(" ", body);
+      parts.push(printBlockSeparator(options), body);
 
       return parts;
     } else if (bodyType === ";") {
@@ -209,9 +226,10 @@ export default {
     const whilePrefix = isNextLine ? [hardline, "while "] : " while ";
     const body = hasEmptyStatement
       ? ";"
-      : isNextLine
-        ? path.call(print, "bodyNode")
-        : [" ", path.call(print, "bodyNode")];
+      : [
+          printStatementSeparator(path.node.bodyNode.type, options),
+          path.call(print, "bodyNode")
+        ];
     return ["do", body, whilePrefix, path.call(print, "conditionNode"), ";"];
   },
 
@@ -245,7 +263,12 @@ export default {
             )
           )
         : "(;;)",
-      hasEmptyStatement ? ";" : [" ", path.call(print, "bodyNode")]
+      hasEmptyStatement
+        ? ";"
+        : [
+            printStatementSeparator(path.node.bodyNode.type, options),
+            path.call(print, "bodyNode")
+          ]
     ];
 
     return parts;
@@ -255,7 +278,7 @@ export default {
     return path.map(print, "children");
   },
 
-  enhanced_for_statement(path, print) {
+  enhanced_for_statement(path, print, options) {
     const danglingComments = printDanglingComments(path);
     const forStatement = [
       danglingComments && [danglingComments, hardline],
@@ -278,7 +301,9 @@ export default {
     } else {
       const body = path.call(print, "bodyNode");
       forStatement.push(
-        bodyType === SyntaxType.Block ? [" ", body] : indent([line, body])
+        bodyType === SyntaxType.Block
+          ? [printBlockSeparator(options), body]
+          : indent([line, body])
       );
     }
     return group(forStatement);
@@ -311,34 +336,25 @@ export default {
   return_statement: printReturnOrThrowStatement,
   throw_statement: printReturnOrThrowStatement,
 
-  synchronized_statement(path, print) {
+  synchronized_statement(path, print, options) {
     const parenthesizedExpressionIndex = path.node.namedChildren.findIndex(
       ({ type }) => type === SyntaxType.ParenthesizedExpression
     );
     return [
       "synchronized ",
       path.call(print, "namedChildren", parenthesizedExpressionIndex),
-      " ",
+      printBlockSeparator(options),
       path.call(print, "bodyNode")
     ];
   },
 
   try_statement(path, print, options) {
-    const parts = ["try", path.call(print, "bodyNode")];
-
-    path.each(child => {
-      if (
-        child.node.type === SyntaxType.CatchClause ||
-        child.node.type === SyntaxType.FinallyClause
-      ) {
-        parts.push(print(child));
-      }
-    }, "namedChildren");
-
-    if (options?.braceStyle === "next-line") {
-      return parts;
-    }
-    return join(" ", parts);
+    return [
+      "try",
+      printBlockSeparator(options),
+      path.call(print, "bodyNode"),
+      ...printCatchAndFinallyClauses(path, print, options)
+    ];
   },
 
   catch_clause(path, print, options) {
@@ -351,11 +367,12 @@ export default {
         options
       )
     );
-    const body = path.call(print, "bodyNode");
-    if (options?.braceStyle === "next-line") {
-      return [hardline, "catch ", params, body];
-    }
-    return ["catch ", params, " ", body];
+    return [
+      "catch ",
+      params,
+      printBlockSeparator(options),
+      path.call(print, "bodyNode")
+    ];
   },
 
   catch_formal_parameter(path, print) {
@@ -381,30 +398,21 @@ export default {
   },
 
   finally_clause(path, print, options) {
-    if (options?.braceStyle === "next-line") {
-      return [hardline, "finally", path.call(print, "namedChildren", 0)];
-    }
-    return ["finally ", path.call(print, "namedChildren", 0)];
+    return [
+      "finally",
+      printBlockSeparator(options),
+      path.call(print, "namedChildren", 0)
+    ];
   },
 
   try_with_resources_statement(path, print, options) {
-    const resources = path.call(print, "resourcesNode");
-    const body = path.call(print, "bodyNode");
-    const clauses: Doc[] = [];
-
-    path.each(child => {
-      if (
-        child.node.type === SyntaxType.CatchClause ||
-        child.node.type === SyntaxType.FinallyClause
-      ) {
-        clauses.push(print(child));
-      }
-    }, "namedChildren");
-
-    if (options?.braceStyle === "next-line") {
-      return ["try ", resources, body, ...clauses];
-    }
-    return join(" ", ["try", resources, body, ...clauses]);
+    return [
+      "try ",
+      path.call(print, "resourcesNode"),
+      printBlockSeparator(options),
+      path.call(print, "bodyNode"),
+      ...printCatchAndFinallyClauses(path, print, options)
+    ];
   },
 
   resource_specification(path, print, options) {
@@ -534,4 +542,33 @@ function printReturnOrThrowStatement(
       : "",
     ";"
   ];
+}
+
+function printStatementSeparator(
+  statementType: string,
+  options: JavaParserOptions
+) {
+  return statementType === SyntaxType.Block
+    ? printBlockSeparator(options)
+    : " ";
+}
+
+// The separator that puts `{` on its own line also puts `catch` and `finally` on their own line.
+function printCatchAndFinallyClauses(
+  path: NamedNodePath<
+    SyntaxType.TryStatement | SyntaxType.TryWithResourcesStatement
+  >,
+  print: PrintFunction,
+  options: JavaParserOptions
+) {
+  const clauses: Doc[] = [];
+  path.each(child => {
+    if (
+      child.node.type === SyntaxType.CatchClause ||
+      child.node.type === SyntaxType.FinallyClause
+    ) {
+      clauses.push(printBlockSeparator(options), print(child));
+    }
+  }, "namedChildren");
+  return clauses;
 }

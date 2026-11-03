@@ -6,7 +6,9 @@ import {
   indentInParentheses,
   printArrayInitializer,
   printBlock,
+  printBlockSeparator,
   printBodyDeclarations,
+  printDeclarationBodySeparators,
   printModifiers,
   printVariableDeclaration,
   type NamedNodePrinters
@@ -37,6 +39,11 @@ export default {
       );
     }
 
+    const separators = printDeclarationBodySeparators(
+      hasExtendsInterfaces || hasPermits,
+      path.node.bodyNode.namedChildren.length > 0,
+      options
+    );
     if (hasExtendsInterfaces || hasPermits) {
       const clauses: Doc[] = [];
       if (hasExtendsInterfaces) {
@@ -48,19 +55,14 @@ export default {
       if (hasPermits) {
         clauses.push(line, path.call(print, "permitsNode"));
       }
-      const hasBody = path.node.bodyNode.namedChildren.length > 0;
-      const clauseGroup = [
-        indent(clauses),
-        options?.braceStyle === "next-line" ? "" : hasBody ? line : " "
-      ];
+      const clauseGroup = [indent(clauses), separators.afterClauses];
       parts.push(hasMultipleClauses ? clauseGroup : group(clauseGroup));
-    } else {
-      parts.push(" ");
     }
 
     return [
       ...printModifiers(path, print, "declarationOnly"),
       group(parts),
+      separators.afterHeader,
       path.call(print, "bodyNode")
     ];
   },
@@ -81,13 +83,13 @@ export default {
 
   constant_declaration: printVariableDeclaration,
 
-  annotation_type_declaration(path, print) {
+  annotation_type_declaration(path, print, options) {
     const parts = printModifiers(path, print);
 
     parts.push(
       "@interface ",
       path.call(print, "nameNode"),
-      " ",
+      printBlockSeparator(options),
       path.call(print, "bodyNode")
     );
 

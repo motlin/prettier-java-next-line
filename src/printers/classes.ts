@@ -7,9 +7,11 @@ import {
   indentInParentheses,
   printAssignment,
   printBlock,
+  printBlockSeparator,
   printBlockStatements,
   printBodyDeclarations,
   printDanglingCommentsInList,
+  printDeclarationBodySeparators,
   printModifiers,
   printTypeParameters,
   printValue,
@@ -41,6 +43,11 @@ export default {
       );
     }
 
+    const separators = printDeclarationBodySeparators(
+      definedClauses.length > 0,
+      path.node.bodyNode.namedChildren.length > 0,
+      options
+    );
     if (definedClauses.length) {
       const clauses = definedClauses.flatMap(clause => {
         if (!hasChild(path, clause)) {
@@ -52,18 +59,14 @@ export default {
             : line;
         return [separator, path.call(print, clause)];
       });
-      const hasBody = path.node.bodyNode.namedChildren.length > 0;
-      const afterClauses =
-        options?.braceStyle === "next-line" ? "" : hasBody ? line : " ";
-      const clauseGroup = [indent(clauses), afterClauses];
+      const clauseGroup = [indent(clauses), separators.afterClauses];
       parts.push(hasMultipleClauses ? clauseGroup : group(clauseGroup));
-    } else if (options?.braceStyle !== "next-line") {
-      parts.push(" ");
     }
 
     return [
       ...printModifiers(path, print, "declarationOnly"),
       group(parts),
+      separators.afterHeader,
       path.call(print, "bodyNode")
     ];
   },
@@ -120,7 +123,7 @@ export default {
     );
   },
 
-  method_declaration(path, print) {
+  method_declaration(path, print, options) {
     const modifiers = printModifiers(path, print);
     const declaration: Doc[] = [];
 
@@ -161,7 +164,12 @@ export default {
     }
 
     return hasChild(path, "bodyNode")
-      ? [modifiers, group(declaration), " ", path.call(print, "bodyNode")]
+      ? [
+          modifiers,
+          group(declaration),
+          printBlockSeparator(options),
+          path.call(print, "bodyNode")
+        ]
       : [modifiers, group(declaration), ";"];
   },
 
@@ -238,11 +246,15 @@ export default {
       : ["throws", group(indent([line, ...join([",", line], exceptions)]))];
   },
 
-  static_initializer(path, print) {
-    return ["static ", path.call(print, "namedChildren", 0)];
+  static_initializer(path, print, options) {
+    return [
+      "static",
+      printBlockSeparator(options),
+      path.call(print, "namedChildren", 0)
+    ];
   },
 
-  constructor_declaration(path, print) {
+  constructor_declaration(path, print, options) {
     const modifiers = printModifiers(path, print, "declarationOnly");
     const declaration: Doc[] = [];
 
@@ -266,7 +278,12 @@ export default {
       );
     }
 
-    return [modifiers, group(declaration), " ", path.call(print, "bodyNode")];
+    return [
+      modifiers,
+      group(declaration),
+      printBlockSeparator(options),
+      path.call(print, "bodyNode")
+    ];
   },
 
   constructor_body(path, print, options) {
@@ -345,16 +362,24 @@ export default {
     const modifiers = printModifiers(path, print, "declarationOnly");
     const parts = ["enum ", path.call(print, "nameNode")];
 
-    if (hasChild(path, "interfacesNode")) {
-      const hasBody = path.node.bodyNode.namedChildren.length > 0;
+    const hasInterfaces = hasChild(path, "interfacesNode");
+    const separators = printDeclarationBodySeparators(
+      hasInterfaces,
+      path.node.bodyNode.namedChildren.length > 0,
+      options
+    );
+    if (hasInterfaces) {
       parts.push(
         indent([hardline, path.call(print, "interfacesNode")]),
-        options?.braceStyle === "next-line" ? "" : hasBody ? line : " "
+        separators.afterClauses
       );
-    } else {
-      parts.push(" ");
     }
-    return [...modifiers, group(parts), path.call(print, "bodyNode")];
+    return [
+      ...modifiers,
+      group(parts),
+      separators.afterHeader,
+      path.call(print, "bodyNode")
+    ];
   },
 
   enum_body(path, print, options) {
@@ -390,14 +415,17 @@ export default {
     return printBlock(path, contents.length ? [contents] : [], options);
   },
 
-  enum_constant(path, print) {
+  enum_constant(path, print, options) {
     const initializer = printModifiers(path, print);
     initializer.push(path.call(print, "nameNode"));
     if (hasChild(path, "argumentsNode")) {
       initializer.push(path.call(print, "argumentsNode"));
     }
     if (hasChild(path, "bodyNode")) {
-      initializer.push(" ", path.call(print, "bodyNode"));
+      initializer.push(
+        printBlockSeparator(options),
+        path.call(print, "bodyNode")
+      );
     }
     return initializer;
   },
@@ -406,7 +434,7 @@ export default {
     return join(hardline, printBodyDeclarations(path, print));
   },
 
-  record_declaration(path, print) {
+  record_declaration(path, print, options) {
     const modifiers = printModifiers(path, print, "declarationOnly");
     const parts = ["record ", path.call(print, "nameNode")];
 
@@ -416,21 +444,33 @@ export default {
 
     parts.push(group(path.call(print, "parametersNode")));
 
-    if (hasChild(path, "interfacesNode")) {
-      const hasBody = path.node.bodyNode.namedChildren.length > 0;
+    const hasInterfaces = hasChild(path, "interfacesNode");
+    const separators = printDeclarationBodySeparators(
+      hasInterfaces,
+      path.node.bodyNode.namedChildren.length > 0,
+      options
+    );
+    if (hasInterfaces) {
       const interfaces = [hardline, path.call(print, "interfacesNode")];
-      parts.push(group([indent(interfaces), hasBody ? line : " "]));
-    } else {
-      parts.push(" ");
+      parts.push(group([indent(interfaces), separators.afterClauses]));
     }
 
-    return [...modifiers, group(parts), path.call(print, "bodyNode")];
+    return [
+      ...modifiers,
+      group(parts),
+      separators.afterHeader,
+      path.call(print, "bodyNode")
+    ];
   },
 
-  compact_constructor_declaration(path, print) {
+  compact_constructor_declaration(path, print, options) {
     const parts = printModifiers(path, print, "declarationOnly");
 
-    parts.push(path.call(print, "nameNode"), " ", path.call(print, "bodyNode"));
+    parts.push(
+      path.call(print, "nameNode"),
+      printBlockSeparator(options),
+      path.call(print, "bodyNode")
+    );
 
     return parts;
   }
