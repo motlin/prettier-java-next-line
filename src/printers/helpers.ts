@@ -407,15 +407,39 @@ function isNestedArray(path: NamedNodePath) {
   );
 }
 
+/**
+ * Separates a header such as `void m()`, `try` or `class A` from the `{` of
+ * the block that follows it. Blocks never add their own leading separator.
+ */
+export function printBlockSeparator(options: JavaParserOptions) {
+  return options.braceStyle === "next-line" ? hardline : " ";
+}
+
+/**
+ * Separators between a declaration header and its body. With same-line braces,
+ * a non-empty body's `{` moves onto its own line when the `extends`,
+ * `implements` or `permits` clauses break, so that separator sits inside the
+ * clause group. With next-line braces, `{` always follows the whole header on
+ * its own line.
+ */
+export function printDeclarationBodySeparators(
+  hasClauses: boolean,
+  hasBody: boolean,
+  options: JavaParserOptions
+) {
+  if (options.braceStyle === "next-line") {
+    return { afterClauses: "", afterHeader: hardline };
+  }
+  return hasClauses
+    ? { afterClauses: hasBody ? line : " ", afterHeader: "" }
+    : { afterClauses: "", afterHeader: " " };
+}
+
 export function printBlock(
   path: NamedNodePath,
   contents: Doc[],
   options?: JavaParserOptions
 ) {
-  if (options?.braceStyle === "next-line") {
-    return printBlockNextLine(path, contents);
-  }
-
   if (contents.length) {
     return group([
       "{",
@@ -427,6 +451,9 @@ export function printBlock(
   const danglingComments = printDanglingComments(path, { indent: true });
   if (danglingComments) {
     return ["{", danglingComments, hardline, "}"];
+  }
+  if (options?.braceStyle === "next-line") {
+    return ["{", hardline, "}"];
   }
   const parent = path.parent;
   const grandparent = path.grandparent;
@@ -465,42 +492,6 @@ export function printBlock(
       ].includes(parent.type))
     ? "{}"
     : ["{", hardline, "}"];
-}
-
-function printBlockNextLine(path: NamedNodePath, contents: Doc[]) {
-  const parentType = path.parent?.type;
-  const isChildOfBodyDeclaration =
-    parentType != null &&
-    [
-      SyntaxType.AnnotationTypeBody,
-      SyntaxType.ClassBody,
-      SyntaxType.EnumBody,
-      SyntaxType.InterfaceBody
-    ].includes(parentType);
-  // A bare block used as a statement already starts on its own line.
-  const isBlockStatement =
-    parentType != null &&
-    [
-      SyntaxType.Block,
-      SyntaxType.ConstructorBody,
-      SyntaxType.SwitchBlockStatementGroup
-    ].includes(parentType);
-  const prefix = isChildOfBodyDeclaration || isBlockStatement ? [] : [hardline];
-
-  if (contents.length) {
-    return [
-      ...prefix,
-      "{",
-      indent([hardline, ...join(hardline, contents)]),
-      hardline,
-      "}"
-    ];
-  }
-  const danglingComments = printDanglingComments(path, { indent: true });
-  if (danglingComments) {
-    return [...prefix, "{", danglingComments, hardline, "}"];
-  }
-  return [...prefix, "{", hardline, "}"];
 }
 
 export function printBlockStatements(

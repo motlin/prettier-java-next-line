@@ -17,6 +17,7 @@ import {
   isReturnOrThrowStatement,
   isTextBlock,
   printAssignment,
+  printBlockSeparator,
   printDanglingComments,
   printDanglingCommentsInList,
   shouldFlatten,
@@ -103,6 +104,10 @@ export default {
     bodyDoc = printArrowFunctionBody(path, args, options, {
       bodyDoc: bodyDoc!,
       bodyComments,
+      bodySeparator:
+        functionBody!.type === SyntaxType.Block
+          ? printBlockSeparator(options)
+          : " ",
       shouldPutBodyOnSameLine
     });
 
@@ -516,12 +521,12 @@ export default {
     return parts;
   },
 
-  object_creation_expression(path, print) {
+  object_creation_expression(path, print, options) {
     const expression: Doc[] = [];
 
     path.each(child => {
       if (child.node.type === SyntaxType.ClassBody) {
-        expression.push(" ");
+        expression.push(printBlockSeparator(options));
       }
 
       expression.push(print(child));
@@ -863,10 +868,12 @@ function printArrowFunctionBody(
   {
     bodyDoc,
     bodyComments,
+    bodySeparator,
     shouldPutBodyOnSameLine
   }: {
     bodyDoc: Doc;
     bodyComments: Doc[];
+    bodySeparator: Doc;
     shouldPutBodyOnSameLine: boolean;
   }
 ) {
@@ -883,7 +890,7 @@ function printArrowFunctionBody(
       : "";
 
   return shouldPutBodyOnSameLine
-    ? [" ", bodyDoc, bodyComments]
+    ? [bodySeparator, bodyDoc, bodyComments]
     : [indent([line, bodyDoc, bodyComments]), trailingSpace];
 }
 

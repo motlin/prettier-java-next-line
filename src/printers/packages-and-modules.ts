@@ -3,6 +3,7 @@ import { builders } from "prettier/doc";
 import { SyntaxType, type NamedNode } from "../node-types.ts";
 import {
   printBlock,
+  printBlockSeparator,
   printDanglingComments,
   printValue,
   type NamedNodePath,
@@ -115,7 +116,7 @@ export default {
     return declaration;
   },
 
-  module_declaration(path, print) {
+  module_declaration(path, print, options) {
     const parts: Doc[] = [];
 
     path.each(child => {
@@ -131,13 +132,13 @@ export default {
       parts.push("open");
     }
 
-    parts.push(
-      "module",
-      path.call(print, "nameNode"),
-      path.call(print, "bodyNode")
-    );
+    parts.push("module", path.call(print, "nameNode"));
 
-    return join(" ", parts);
+    return [
+      join(" ", parts),
+      printBlockSeparator(options),
+      path.call(print, "bodyNode")
+    ];
   },
 
   module_body(path, print, options) {
