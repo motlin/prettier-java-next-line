@@ -26,3 +26,15 @@ class Implementing<KKKKKKKKKKKKKKKKKKKK, VVVVVVVVVVVVVVVVVVVV, TTTTTTTTTTTTTT> e
 }
 
 interface Extending extends Firsttttttttttttttttttt, Seconddddddddddddddddddd {}
+
+class Casts {
+  Object casts(Object value) {
+    Object intersection = (Aaaaaaaaaaaaaaaaaaaaaaa & Bbbbbbbbbbbbbbbbbbbbbbbbbbbbb & Ccccccccccc) value;
+    int length = ((Ccccccccccccccccccccccccccccccc) aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa).length();
+    boolean negated = !(Booleannnnnnnnnnnnnnnnnnnnnnnnnnnnn) aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa;
+    return switch (value) {
+      case String s when aaaaaaaaaaaaaaaaaaaaaaaaaaaa && bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb -> s;
+      default -> null;
+    };
+  }
+}

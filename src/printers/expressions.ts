@@ -485,7 +485,7 @@ export default {
     }
   },
 
-  cast_expression(path, print) {
+  cast_expression(path, print, options) {
     const { node } = path;
 
     const castGroup = group(
@@ -497,7 +497,7 @@ export default {
               softline,
               join([" &", line], path.map(print, "typeNodes"))
             ]),
-            softline,
+            closingBracketLine(options),
             ")"
           ]
     );
@@ -515,7 +515,7 @@ export default {
       parent?.type === SyntaxType.MethodReference ||
       parent?.type === SyntaxType.ObjectCreationExpression
     ) {
-      return group([indent([softline, ...parts]), softline]);
+      return group([indent([softline, ...parts]), closingBracketLine(options)]);
     }
 
     return parts;
@@ -757,13 +757,13 @@ export default {
     return join(" ", path.map(print, "children"));
   },
 
-  guard(path, print) {
+  guard(path, print, options) {
     return [
       "when ",
       group([
         ifBreak("("),
         indent([softline, path.call(print, "namedChildren", 0)]),
-        softline,
+        closingBracketLine(options),
         ifBreak(")")
       ])
     ];
