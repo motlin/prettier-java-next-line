@@ -1,3 +1,9 @@
+# prettier-java-next-line 2.11.3
+
+## What's Changed
+* Fix next-line brace placement. A block that is the only statement of a `case` keeps its `{` on the next line, own-line comments between a header and its block stay on their own line, end-of-line comments after method parameters get one space, and record bodies and enum instance initializers are separated correctly.
+* Method, constructor, and generic class headers that fit within `printWidth` stay on one line instead of breaking their parameters or type parameters.
+
 # prettier-java-next-line 2.11.2
 
 ## What's Changed
