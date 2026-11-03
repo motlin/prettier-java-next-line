@@ -283,7 +283,7 @@ export default {
     const forStatement = [
       danglingComments && [danglingComments, hardline],
       "for (",
-      ...printModifiers(path, print),
+      ...printModifiers(path, print, "noBreak"),
       path.call(print, "typeNode"),
       " ",
       path.call(print, "nameNode")
@@ -442,7 +442,7 @@ export default {
       hasChild(path, "nameNode") &&
       hasChild(path, "valueNode")
     ) {
-      const parts = printModifiers(path, print);
+      const parts = printModifiers(path, print, "noBreak");
 
       parts.push(
         path.call(print, "typeNode"),

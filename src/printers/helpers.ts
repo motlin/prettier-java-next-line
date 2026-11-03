@@ -620,7 +620,13 @@ export function printVariableDeclaration(
   >,
   print: PrintFunction
 ) {
-  const declaration = printModifiers(path, print);
+  const declaration = printModifiers(
+    path,
+    print,
+    (path.parent as NamedNode | null)?.type === SyntaxType.ForStatement
+      ? "noBreak"
+      : undefined
+  );
 
   declaration.push(path.call(print, "typeNode"), " ");
 

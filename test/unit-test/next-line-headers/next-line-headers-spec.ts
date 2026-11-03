@@ -11,4 +11,10 @@ describe("prettier-java", () => {
   testSampleWithOptions({
     testFolder: path.resolve(__dirname, "./typeParametersBeforeClauses")
   });
+  testSampleWithOptions({
+    testFolder: path.resolve(__dirname, "./annotatedHeaderVariablesNextLine")
+  });
+  testSampleWithOptions({
+    testFolder: path.resolve(__dirname, "./annotatedHeaderVariablesSameLine")
+  });
 });
