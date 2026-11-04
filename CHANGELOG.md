@@ -1,3 +1,14 @@
+# prettier-java-next-line 2.11.4
+
+## What's Changed
+* With `braceStyle: "same-line"`, class and interface type parameters stay on one line when they fit, and a comment between a method header and its `{` moves into the method body so a second format no longer changes it.
+* Annotated variables in `for` and try-with-resources headers stay on one line, as in `for (@Nullable String s : items)`.
+* Text blocks with an embedded language keep `\b`, `\f` and octal escapes as written instead of doubling their backslash.
+* With `braceStyle: "next-line"`, an empty array initializer that holds only a comment follows `arrayInitializerLayout`, and annotation values such as `@SuppressWarnings({ /* none */ })` stay inline.
+* `closingBracket: "same-line"` now also applies to intersection-type casts, parenthesized casts in member chains and unary expressions, and `case ... when` guards.
+* With `experimentalOperatorPosition: "end"`, the default, the condition of a nested ternary no longer gets an extra two-space indent.
+* Free the parser's syntax tree when a file fails to parse, so repeated format attempts on a broken file no longer leak memory.
+
 # prettier-java-next-line 2.11.3
 
 ## What's Changed
