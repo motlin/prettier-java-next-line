@@ -19,7 +19,7 @@ describe("prettier-java: parser", () => {
   });
 
   const parse = (text: string) =>
-    plugin.parsers!.java.parse(text, {} as never) as Promise<unknown>;
+    plugin.parsers!.java.parse(text) as Promise<unknown>;
 
   it("deletes the tree after a successful parse", async () => {
     await parse("class A {}");
