@@ -286,8 +286,10 @@ function handleMethodHeaderComments(
   const { enclosingNode, followingNode } = commentNode;
   if (
     options.braceStyle !== "same-line" ||
-    enclosingNode?.type !== SyntaxType.MethodDeclaration ||
-    followingNode?.type !== SyntaxType.Block ||
+    (enclosingNode?.type !== SyntaxType.MethodDeclaration &&
+      enclosingNode?.type !== SyntaxType.ConstructorDeclaration &&
+      enclosingNode?.type !== SyntaxType.CompactConstructorDeclaration) ||
+    !followingNode ||
     followingNode !== enclosingNode.bodyNode
   ) {
     return false;
