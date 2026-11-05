@@ -35,6 +35,7 @@ jobs:
     strategy:
       matrix:
         test_repository:
+          - e2e-core
           - e2e-jhipster1
           - e2e-jhipster2
         node_version: [24.x]
