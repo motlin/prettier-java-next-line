@@ -36,7 +36,7 @@ pack:
 
 # ./install-local.sh <project_path>
 install-local project_path:
-    ./install-local.sh "{{project_path}}"
+    ./install-local.sh "{{ project_path }}"
 
 # Clean build artifacts
 clean:
