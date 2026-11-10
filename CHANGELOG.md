@@ -1,3 +1,9 @@
+# prettier-java-next-line 2.11.5
+
+## What's Changed
+* With `braceStyle: "same-line"`, a comment between a constructor header and its `{` moves into the constructor body, as it already did for methods, so a second format no longer changes it. This covers compact record constructors too.
+* Merge upstream prettier-java dependency updates, including tree-sitter-java-orchard 0.5.23.
+
 # prettier-java-next-line 2.11.4
 
 ## What's Changed
