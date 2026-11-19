@@ -237,4 +237,22 @@ public class TextBlock {
     <html><head></head></html>
     """;
   }
+
+  void comments() {
+    """
+      /* a "b" c */
+      x""";
+
+    """
+      // a "b
+      x""";
+
+    """
+      /* a \\n b */
+      x""";
+
+    """
+      // a \\ b
+      x""";
+  }
 }

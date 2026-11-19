@@ -124,21 +124,17 @@ export default {
         child.node.type === SyntaxType.Annotation ||
         child.node.type === SyntaxType.MarkerAnnotation
       ) {
-        parts.push(print(child));
+        parts.push(print(child), hardline);
       }
     }, "namedChildren");
 
     if (path.node.children.some(({ type }) => type === "open")) {
-      parts.push("open");
+      parts.push("open", " ");
     }
 
-    parts.push("module", path.call(print, "nameNode"));
+    parts.push(join(" ", ["module", path.call(print, "nameNode")]));
 
-    return [
-      join(" ", parts),
-      printBlockSeparator(options),
-      path.call(print, "bodyNode")
-    ];
+    return [parts, printBlockSeparator(options), path.call(print, "bodyNode")];
   },
 
   module_body(path, print, options) {

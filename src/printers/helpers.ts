@@ -719,19 +719,14 @@ export function printTextBlock(contents: Doc) {
 }
 
 export function isTextBlock(node: NamedNode) {
-  return (
-    node.type === SyntaxType.StringLiteral && node.children[0].value === '"""'
-  );
+  return node.type === SyntaxType.StringLiteral && node.value.startsWith('"""');
 }
 
 export function embedTextBlock(
   path: NamedNodePath<SyntaxType.StringLiteral>,
   options: Options
 ) {
-  const hasInterpolations = path.node.namedChildren.some(
-    ({ type }) => type === SyntaxType.StringInterpolation
-  );
-  if (hasInterpolations || !isTextBlock(path.node)) {
+  if (path.node.children.length > 0 || !isTextBlock(path.node)) {
     return null;
   }
 
