@@ -308,11 +308,7 @@ function handleMethodHeaderComments(
 
 function handleModifiersComments(commentNode: CommentNode) {
   const { precedingNode } = commentNode;
-  if (
-    precedingNode?.type === SyntaxType.Annotation ||
-    precedingNode?.type === SyntaxType.MarkerAnnotation ||
-    precedingNode?.type === SyntaxType.Modifiers
-  ) {
+  if (precedingNode?.type === SyntaxType.Modifiers) {
     util.addTrailingComment(precedingNode, commentNode);
     return true;
   }
